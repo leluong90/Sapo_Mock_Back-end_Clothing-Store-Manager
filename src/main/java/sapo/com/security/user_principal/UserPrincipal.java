@@ -18,7 +18,7 @@ import java.util.Collection;
 public class UserPrincipal implements UserDetails {
     private Long id ;
     private String email ;
-    private String userName ;
+    private String name ;
     private String password ;
     private User user ;
     private Collection<?extends GrantedAuthority> authorities ;
@@ -28,7 +28,7 @@ public class UserPrincipal implements UserDetails {
         return UserPrincipal.builder()
                 .id(user.getId())
                 .email(user.getEmail())
-                .userName(user.getName())
+                .name(user.getName())
                 .password(user.getPassword())
                 .authorities(user.getRoles().stream().map(item-> new SimpleGrantedAuthority(item.getName().toString())).toList()).build();
     }

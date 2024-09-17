@@ -1,0 +1,24 @@
+package sapo.com.exception;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import sapo.com.model.dto.response.ResponseObject;
+
+// inh lớp naày  ngoại lệ chung
+@RestControllerAdvice
+public class ExceptionHandler extends RuntimeException {
+    @org.springframework.web.bind.annotation.ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<ResponseObject> handleGeneralException(Exception exception){
+        return ResponseEntity.internalServerError().body(
+                ResponseObject.builder()
+                        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .message(exception.getMessage())
+                        .build()
+        );
+    }
+
+
+}

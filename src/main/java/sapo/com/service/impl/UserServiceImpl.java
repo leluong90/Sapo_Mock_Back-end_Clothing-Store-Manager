@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import sapo.com.exception.UserException;
 import sapo.com.model.dto.request.UserRequest;
 import sapo.com.model.dto.response.UserResponse;
-import sapo.com.model.entity.ERole;
 import sapo.com.model.entity.Role;
 import sapo.com.model.entity.User;
 import sapo.com.repository.UserRepository;
@@ -43,25 +42,22 @@ public class UserServiceImpl implements UserService {
 //        ma hoa mat khau
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 //        roles
-//        Set<Role> roles = new HashSet<>();
-////        register cua user thi coi no la USER
-//        if(user.getRoles() == null || user.getRoles().isEmpty()){
-//            roles.add(roleService.findByRoleName(ERole.ROLE_ADMIN) );
-//        }else {
-//
-////        Tao tk va phan quyen thi phai co quyen ADMIN
-////            user.getRoles().forEach(role -> {
-////                roles.add(roleService.findByRoleName(ERole.valueOf(role.getName().toString())));
-////            });
-//            user.getRoles().forEach(role -> {
-//                roles.add(roleService.findByRoleName(ERole.valueOf(role.getName().toString())));
-//            });
-//        }
+        Set<Role> roles = new HashSet<>();
 
-        // Convert role names (strings) to Role objects
-        Set<Role> roles = user.getRoles().stream()
-                .map(roleName -> roleService.findByRoleName(ERole.valueOf(roleName)))  // Convert string to ERole
-                .collect(Collectors.toSet());
+//        register cua user thi coi no la USER
+        if(user.getRoles() == null || user.getRoles().isEmpty()){
+            roles.add(roleService.findByRoleName("ROLE_ADMIN") );
+        }else {
+
+//        Tao tk va phan quyen thi phai co quyen ADMIN
+            user.getRoles().forEach(role -> {
+                roles.add(roleService.findByRoleName(role.getName()));
+            });
+
+        }
+
+
+
         User newUser = new User() ;
         newUser.setName(user.getName());
         newUser.setEmail(user.getEmail());
@@ -84,7 +80,7 @@ public class UserServiceImpl implements UserService {
             return UserResponse.builder()
                     .token(jwtProvider.generateToken(userPrincipal))
                     .email(userPrincipal.getEmail())
-                    .userName(userPrincipal.getUsername())
+                    .name(userPrincipal.getName())
                     .roles(userPrincipal.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet()))
                     .build();
 

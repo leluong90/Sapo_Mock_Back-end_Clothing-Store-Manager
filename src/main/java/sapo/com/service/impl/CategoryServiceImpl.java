@@ -14,13 +14,14 @@ import sapo.com.model.dto.response.CategoryResponse;
 import sapo.com.model.entity.Category;
 import sapo.com.repository.CategoryRepository;
 import sapo.com.repository.ProductRepository;
+import sapo.com.service.CategoryService;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
 @Service
-public class CategoryServiceImpl {
+public class CategoryServiceImpl implements CategoryService {
 
     private static final Logger log = LoggerFactory.getLogger(CategoryServiceImpl.class);
 

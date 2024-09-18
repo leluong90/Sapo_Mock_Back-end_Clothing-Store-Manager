@@ -18,13 +18,14 @@ import sapo.com.model.entity.Category;
 import sapo.com.repository.BrandRepository;
 import sapo.com.repository.CategoryRepository;
 import sapo.com.repository.ProductRepository;
+import sapo.com.service.BrandService;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
 @Service
-public class BrandServiceImpl {
+public class BrandServiceImpl implements BrandService {
 
     private static final Logger log = LoggerFactory.getLogger(BrandServiceImpl.class);
 

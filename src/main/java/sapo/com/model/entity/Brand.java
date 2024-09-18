@@ -1,6 +1,9 @@
 package sapo.com.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,7 +16,6 @@ import java.util.Set;
 @AllArgsConstructor
 @Getter
 @Setter
-@Data
 @Builder
 @Table(name = "brands")
 public class Brand {
@@ -27,7 +29,12 @@ public class Brand {
     @JsonFormat(shape = JsonFormat.Shape.STRING , pattern = "dd-MM-yyyy HH:mm")
     private LocalDateTime createdOn ;
     @JsonFormat(shape = JsonFormat.Shape.STRING , pattern = "dd-MM-yyyy HH:mm")
-    private LocalDateTime updateOn ;
-    @OneToMany(mappedBy = "brand")
+    private LocalDateTime updatedOn ;
+    @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private Set<Product> products;
+    @Override
+    public String toString() {
+        return "League [id=" + id + ", name=" + name + "]";
+    }
 }

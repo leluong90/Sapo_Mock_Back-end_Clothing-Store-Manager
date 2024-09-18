@@ -31,21 +31,25 @@ public class VariantResponse {
     private LocalDateTime createdOn ;
     private LocalDateTime updateOn ;
 
-    public VariantResponse(Variant variant) {
-        this.id = variant.getId();
-        this.name = variant.getName();
-        this.productId = variant.getProduct().getId();
-        this.productName = variant.getProduct().getName();
-        this.sku = variant.getSku();
-        this.size = variant.getSize();
-        this.color = variant.getColor();
-        this.material = variant.getMaterial();
-        this.quantity = variant.getQuantity();
-        this.initialPrice = variant.getInitialPrice();
-        this.priceForSale = variant.getPriceForSale();
-        this.status = variant.getStatus();
-        this.imagePath = variant.getImagePath();
-        this.createdOn = variant.getCreatedOn();
-        this.updateOn = variant.getUpdateOn();
+//    public VariantResponse(Variant variant) {
+//        this.id = variant.getId();
+//        this.name = variant.getName();
+//        this.productId = variant.getProduct().getId();
+//        this.productName = variant.getProduct().getName();
+//        this.sku = variant.getSku();
+//        this.size = variant.getSize();
+//        this.color = variant.getColor();
+//        this.material = variant.getMaterial();
+//        this.quantity = variant.getQuantity();
+//        this.initialPrice = variant.getInitialPrice();
+//        this.priceForSale = variant.getPriceForSale();
+//        this.status = variant.getStatus();
+//        this.imagePath = variant.getImagePath();
+//        this.createdOn = variant.getCreatedOn();
+//        this.updateOn = variant.getUpdateOn();
+//    }
+
+    public VariantResponse(){
+
     }
 }

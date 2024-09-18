@@ -14,6 +14,7 @@ import sapo.com.model.dto.response.ProductResponse;
 import sapo.com.model.dto.response.VariantResponse;
 import sapo.com.model.entity.*;
 import sapo.com.repository.*;
+import sapo.com.service.ProductService;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -24,7 +25,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
-public class ProductServiceImpl{
+public class ProductServiceImpl implements ProductService {
 
     private static final Logger log = LoggerFactory.getLogger(ProductServiceImpl.class);
 
@@ -46,7 +47,6 @@ public class ProductServiceImpl{
     @Autowired
     private ImagePathRepository imagePathRepository;
 
-    @Transactional
     public Set<ProductResponse> getListOfProducts(Long page, Long limit,String queryString){
         try{
             Set<Product> products = productRepository.getListOfProducts(page, limit, queryString);
@@ -61,7 +61,6 @@ public class ProductServiceImpl{
         }
     }
 
-    @Transactional
     public Set<VariantResponse> getListOfVariants(Long page, Long limit,String queryString){
         try{
             Set<Variant> variants = variantRepository.getListOfVariants(page, limit, queryString);
@@ -72,6 +71,36 @@ public class ProductServiceImpl{
             return variantsResponse;
         }catch(Exception e) {
             e.printStackTrace();
+            return null;
+        }
+    }
+
+    public ProductResponse getProductById(Long id){
+        try{
+            Optional<Product> product = productRepository.findById(id);
+            if (product.isPresent()) {
+                ProductResponse productResponse = product.get().transferToResponse();
+                statisticSizeColorMaterial(productResponse);
+                return productResponse;
+            } else {
+                throw new ResourceNotFoundException("Product id not found");
+            }
+        }catch(Exception e){
+            log.error("Error: ",e);
+            return null;
+        }
+    }
+
+    public VariantResponse getVariantById(Long productId, Long variantId){
+        try{
+            Optional<Variant> variant = variantRepository.findById(variantId);
+            if (variant.isPresent()) {
+                return variant.get().transferToResponse();
+            } else {
+                throw new ResourceNotFoundException("Variant id not found");
+            }
+        }catch(Exception e){
+            log.error("Error: ",e);
             return null;
         }
     }
@@ -117,36 +146,6 @@ public class ProductServiceImpl{
             return savedVariant.transferToResponse();
         }catch(Exception e){
             log.error("error",e);
-            return null;
-        }
-    }
-
-    public ProductResponse getProductById(Long id){
-        try{
-            Optional<Product> product = productRepository.findById(id);
-            if (product.isPresent()) {
-                ProductResponse productResponse = product.get().transferToResponse();
-                statisticSizeColorMaterial(productResponse);
-                return productResponse;
-            } else {
-                throw new ResourceNotFoundException("Product id not found");
-            }
-        }catch(Exception e){
-            log.error("Error: ",e);
-            return null;
-        }
-    }
-
-    public VariantResponse getVariantById(Long productId, Long variantId){
-        try{
-            Optional<Variant> variant = variantRepository.findById(variantId);
-            if (variant.isPresent()) {
-                return variant.get().transferToResponse();
-            } else {
-                throw new ResourceNotFoundException("Variant id not found");
-            }
-        }catch(Exception e){
-            log.error("Error: ",e);
             return null;
         }
     }

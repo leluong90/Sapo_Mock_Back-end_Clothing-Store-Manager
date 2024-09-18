@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
+import sapo.com.model.dto.response.CategoryResponse;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -25,20 +26,29 @@ public class Category {
     private String name ;
     @Column(unique = true)
     private String code ;
+    private Boolean status;
     private String description  ;
     @JsonFormat(shape = JsonFormat.Shape.STRING , pattern = "dd-MM-yyyy HH:mm")
     @Column(name = "created_on")
     private LocalDateTime createdOn ;
     @JsonFormat(shape = JsonFormat.Shape.STRING , pattern = "dd-MM-yyyy HH:mm")
     @Column(name = "updated_on")
+    private LocalDateTime updatedOn ;
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private Set<Product> products;
-    private LocalDateTime updatedOn ;
 
-    @Override
-    public String toString() {
-        return "League [id=" + id + ", name=" + name + "]";
+
+    public CategoryResponse transferToResponse(){
+        CategoryResponse categoryResponse = new CategoryResponse();
+        categoryResponse.setId(this.id);
+        categoryResponse.setName(this.name);
+        categoryResponse.setCode(this.code);
+        categoryResponse.setDescription(this.description);
+        categoryResponse.setStatus(this.status);
+        categoryResponse.setCreatedOn(this.createdOn);
+        categoryResponse.setUpdatedOn(this.updatedOn);
+        return categoryResponse;
     }
 
 

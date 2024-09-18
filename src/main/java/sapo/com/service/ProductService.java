@@ -1,20 +1,20 @@
 package sapo.com.service;
 
-import sapo.com.exception.ProductException;
 import sapo.com.model.dto.request.ProductRequest;
 import sapo.com.model.dto.request.VariantRequest;
 import sapo.com.model.dto.response.ProductResponse;
-import sapo.com.model.entity.Product;
-import sapo.com.model.entity.Variant;
+import sapo.com.model.dto.response.VariantResponse;
+
+import java.util.Set;
 
 public interface ProductService {
-     Product findProductById(Long id);
+     Set<ProductResponse> getListOfProducts(Long page, Long limit,String queryString);
+     Set<VariantResponse> getListOfVariants(Long page, Long limit, String queryString);
+     ProductResponse getProductById(Long id);
+     VariantResponse getVariantById(Long productId, Long variantId);
      ProductResponse createNewProduct(ProductRequest productRequest);
-     Product updateProduct(Long id,Product product);
-     Product deleteProduct(Long id);
-     Variant findVariantById(Long id);
-     Variant createNewVariant(VariantRequest variantRequest);
-     Variant updateVariant(Long id,Variant variant);
-     Variant deleteVariant(Long id);
-
+     VariantResponse createNewVariant(Long productId,VariantRequest variantRequest );
+     ProductResponse updateProduct(Long id,ProductRequest productRequest);
+     Boolean deleteProductById(Long id);
+     Boolean deleteVariantById(Long productId, Long variantId);
 }

@@ -20,7 +20,7 @@ import java.util.Set;
 @RequestMapping("/v1/products")
 public class ProductController {
 
-    private static final Logger log = LoggerFactory.getLogger(ProductServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(ProductController.class);
 
     @Autowired
     private ProductServiceImpl productService ;
@@ -41,6 +41,27 @@ public class ProductController {
         try{
             Set<VariantResponse> variantResponse = productService.getListOfVariants(page,limit,query);
             return new ResponseEntity<>(new ResponseObject("Get product info successfully", variantResponse), HttpStatus.OK);
+        }catch(Exception e){
+            log.error("Error: ",e);
+            return null;
+        }
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getProductById(@PathVariable Long id){
+        try{
+            ProductResponse productResponse = productService.getProductById(id);
+            return new ResponseEntity<>(new ResponseObject("Get product info successfully", productResponse), HttpStatus.OK);
+        }catch(Exception e){
+            log.error("Error: ",e);
+            return null;
+        }
+    }
+
+    @GetMapping("/{productId}/variants/{variantId}")
+    public ResponseEntity<?> getVariantById(@PathVariable Long productId, @PathVariable Long variantId){
+        try{
+            VariantResponse variantResponse = productService.getVariantById(productId, variantId);
+            return new ResponseEntity<>(new ResponseObject("Get variant info successfully", variantResponse), HttpStatus.OK);
         }catch(Exception e){
             log.error("Error: ",e);
             return null;
@@ -69,29 +90,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getProductById(@PathVariable Long id){
-        try{
-            ProductResponse productResponse = productService.getProductById(id);
-            return new ResponseEntity<>(new ResponseObject("Get product info successfully", productResponse), HttpStatus.OK);
-        }catch(Exception e){
-            log.error("Error: ",e);
-            return null;
-        }
-    }
-
-    @GetMapping("/{productId}/variants/{variantId}")
-    public ResponseEntity<?> getVariantById(@PathVariable Long productId, @PathVariable Long variantId){
-        try{
-            VariantResponse variantResponse = productService.getVariantById(productId, variantId);
-            return new ResponseEntity<>(new ResponseObject("Get variant info successfully", variantResponse), HttpStatus.OK);
-        }catch(Exception e){
-            log.error("Error: ",e);
-            return null;
-        }
-    }
-
-    @PostMapping("/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<ResponseObject> updateProduct(@PathVariable Long id,@Valid @RequestBody ProductRequest productRequest) {
 
         try{

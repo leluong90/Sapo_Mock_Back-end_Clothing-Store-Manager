@@ -1,6 +1,5 @@
 package sapo.com.service.impl;
 
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.slf4j.Logger;
@@ -8,16 +7,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sapo.com.exception.DataConflictException;
 import sapo.com.exception.ResourceNotFoundException;
 import sapo.com.model.dto.request.BrandRequest;
-import sapo.com.model.dto.request.CategoryRequest;
 import sapo.com.model.dto.response.BrandResponse;
-import sapo.com.model.dto.response.CategoryResponse;
 import sapo.com.model.entity.Brand;
-import sapo.com.model.entity.Category;
+import sapo.com.model.entity.Product;
 import sapo.com.repository.BrandRepository;
-import sapo.com.repository.CategoryRepository;
-import sapo.com.repository.ProductRepository;
 import sapo.com.service.BrandService;
 
 import java.time.LocalDateTime;
@@ -32,80 +28,84 @@ public class BrandServiceImpl implements BrandService {
     @Autowired
     private BrandRepository brandRepository;
 
+    @PersistenceContext
+    private EntityManager entityManager;
 
-    public Set<BrandResponse> getListOfBrands(Long page, Long limit, String queryString){
-        try{
-            Set<Brand> brands = brandRepository.getListOfBrands(page,limit,queryString);
-            Set<BrandResponse> brandsResponse = new HashSet<>();
-            for(Brand brand: brands){
-                brandsResponse.add(brand.transferToResponse());
-            }
+
+    public Set<BrandResponse> getListOfBrands(Long page, Long limit, String queryString) {
+        Set<Brand> brands = brandRepository.getListOfBrands(page, limit, queryString);
+        Set<BrandResponse> brandsResponse = new HashSet<>();
+        for (Brand brand : brands) {
+            brandsResponse.add(brand.transferToResponse());
+        }
+        if(!brandsResponse.isEmpty())
             return brandsResponse;
-        }catch(Exception e){
-            log.error("Error:",e);
-            return null;
-        }
+        else throw new ResourceNotFoundException("Nhãn hiệu không tồn tại");
     }
 
-    public BrandResponse getBrandById(Long id){
-        try{
-            Brand brand = brandRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Brand not found"));
-//            if(category.getStatus()==false){
-//                throw new ResourceNotFoundException("Category no longer existed");
-//            }
+    public BrandResponse getBrandById(Long id) {
+        Brand brand = brandRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Nhãn hiệu không tồn tại hoặc đã bị xóa"));
+        if (brand.getStatus()) {
             return brand.transferToResponse();
-        }catch(Exception e){
-            log.error("Error:",e);
-            return null;
-        }
+        } else
+            throw new ResourceNotFoundException("Nhãn hiệu không tồn tại hoặc đã bị xóa");
     }
 
     @Transactional
-    public BrandResponse createNewBrand(BrandRequest brandRequest){
-        try{
-            Brand brand = new Brand();
-            brand.setName(brandRequest.getName());
-            brand.setCode(brandRequest.getCode());
-            brand.setDescription(brandRequest.getDescription());
-            brand.setStatus(true);
-            brand.setCreatedOn(LocalDateTime.now());
-            brand.setUpdatedOn(LocalDateTime.now());
-            Brand savedBrand = brandRepository.save(brand);
-            return savedBrand.transferToResponse();
-        }catch(Exception e){
-            log.error("Error:",e);
-            return null;
+    public BrandResponse createNewBrand(BrandRequest brandRequest) {
+        String code = brandRequest.getCode();
+        if (code != "" && code.startsWith("PBN")) {
+            throw new DataConflictException("Mã nhãn hiệu không được có tiền tố " + "PBN");
         }
+        if (code != "" && brandRepository.existsByCode(code)) {
+            throw new DataConflictException("Code " + code + " đã tồn tại.");
+        }
+        Brand brand = new Brand();
+        brand.setName(brandRequest.getName());
+        brand.setCode(brandRequest.getCode());
+        brand.setDescription(brandRequest.getDescription());
+        brand.setStatus(true);
+        brand.setCreatedOn(LocalDateTime.now());
+        brand.setUpdatedOn(LocalDateTime.now());
+        Brand savedBrand = brandRepository.save(brand);
+        entityManager.refresh(savedBrand);
+        return savedBrand.transferToResponse();
     }
 
     @Transactional
-    public BrandResponse updateBrand(Long id, BrandRequest brandRequest){
-        try{
-            Brand brand = brandRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Brand not found"));
-            brand.setName(brandRequest.getName());
-            brand.setCode(brandRequest.getCode());
-            brand.setDescription(brandRequest.getDescription());
-            brand.setUpdatedOn(LocalDateTime.now());
-            Brand savedBrand = brandRepository.save(brand);
-            return savedBrand.transferToResponse();
-        }catch(Exception e){
-            log.error("Error:",e);
-            return null;
+    public BrandResponse updateBrand(Long id, BrandRequest brandRequest) {
+        Brand brand = brandRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Nhãn hiệu không tồn tại hoặc đã bị xóa"));
+        String code = brandRequest.getCode();
+        if (code != "" && code.startsWith("PBN")) {
+            throw new DataConflictException("Mã nhãn hiệu không được có tiền tố " + "PBN");
         }
+        if (code != "" && brandRepository.existsByCode(code)) {
+            throw new DataConflictException("Code " + code + " đã tồn tại.");
+        }
+        brand.setName(brandRequest.getName());
+        if (code != "") {
+            brand.setCode(code);
+        }
+        brand.setDescription(brandRequest.getDescription());
+        brand.setUpdatedOn(LocalDateTime.now());
+        Brand savedBrand = brandRepository.saveAndFlush(brand);
+        entityManager.refresh(savedBrand);
+        return savedBrand.transferToResponse();
+
     }
 
     @Transactional
-    public Boolean deleteBrandById(Long id){
-        try{
-            Brand brand = brandRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Brand not found"));
+    public Boolean deleteBrandById(Long id) {
+        Brand brand = brandRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Nhãn hiệu không tồn tại hoặc đã bị xóa"));
+        Set<Product> products= brandRepository.existProduct(id);
+        if(products.isEmpty()){
             brandRepository.deleteBrandById(id);
             return true;
-        }catch(Exception e){
-            log.error("Error:",e);
-            return false;
         }
+        return false;
     }
+
 }

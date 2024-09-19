@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import sapo.com.model.entity.Brand;
 import sapo.com.model.entity.Category;
+import sapo.com.model.entity.Product;
 
 import java.util.Set;
 
@@ -23,4 +24,11 @@ public interface BrandRepository extends JpaRepository<Brand, Long> {
     )
     Set<Brand> getListOfBrands(Long page, Long limit, String query );
 
+    boolean existsByCode(String code);
+
+    @Query(value = "SELECT d.code FROM Brand d WHERE d.code LIKE 'PBN%' ORDER BY d.code DESC LIMIT 1", nativeQuery = true)
+    String findMaxCode();
+
+    @Query(value = "SELECT p FROM Product p WHERE p.category.id = :id AND p.status = true")
+    Set<Product> existProduct(@Param("id") Long id);
 }

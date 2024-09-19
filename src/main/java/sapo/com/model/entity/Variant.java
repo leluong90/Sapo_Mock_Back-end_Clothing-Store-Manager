@@ -35,6 +35,7 @@ public class Variant {
 //    @JoinColumn(name = "creator_id")
 //    private Long creatorId;
     private String name;
+    @Column(nullable = false)
     private String sku;
     private String size;
     private String color;
@@ -78,7 +79,8 @@ public class Variant {
     public void updateFromRequest(VariantRequest variantRequest){
         this.id = variantRequest.getId();
         this.name = variantRequest.getName();
-        this.sku = variantRequest.getSku();
+        if(variantRequest.getSku().length()!=0)
+            this.sku = variantRequest.getSku();
         this.size = variantRequest.getSize();
         this.color = variantRequest.getColor();
         this.material = variantRequest.getMaterial();

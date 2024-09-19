@@ -18,19 +18,19 @@ public class VariantRequest {
     private Long id;
     private Long productId;
     @Valid
-    @NotBlank
+    @NotBlank(message = "Variant name is required")
     private String name;
     private String sku;
     private String size;
     private String color;
     private String material;
     @Valid
-    @NotNull
-    @Min(0)
+    @NotNull(message = "Initial price is required")
+    @Min(value = 0,message = "Price must be a positive value")
     private BigDecimal initialPrice;
     @Valid
-    @NotNull
-    @Min(0)
+    @NotNull(message = "Initial price is required")
+    @Min(value = 0,message = "Price must be a positive value")
     private BigDecimal priceForSale;
     private String imagePath;
 

@@ -9,17 +9,18 @@ import org.springframework.stereotype.Repository;
 import sapo.com.model.entity.Product;
 import sapo.com.model.entity.Variant;
 
+import java.util.Optional;
 import java.util.Set;
 
 @Repository
 public interface VariantRepository extends JpaRepository<Variant, Long> {
-    @Query("SELECT DISTINCT v.size FROM Variant v WHERE v.product.id = :productId")
+    @Query("SELECT DISTINCT v.size FROM Variant v WHERE v.product.id = :productId AND v.status = true")
     Set<String> findDistinctSizesByProductId(@Param("productId") Long productId);
 
-    @Query("SELECT DISTINCT v.color FROM Variant v WHERE v.product.id = :productId")
+    @Query("SELECT DISTINCT v.color FROM Variant v WHERE v.product.id = :productId AND v.status = true")
     Set<String> findDistinctColorsByProductId(@Param("productId") Long productId);
 
-    @Query("SELECT DISTINCT v.material FROM Variant v WHERE v.product.id = :productId")
+    @Query("SELECT DISTINCT v.material FROM Variant v WHERE v.product.id = :productId AND v.status = true")
     Set<String> findDistinctMaterialsByProductId(@Param("productId") Long productId);
 
     @Modifying
@@ -36,5 +37,10 @@ public interface VariantRepository extends JpaRepository<Variant, Long> {
     )
     Set<Variant> getListOfVariants(Long page, Long limit, String query );
 
+    boolean existsBySku(String sku);
 
+    @Query(value = "SELECT v.sku FROM Variant v WHERE v.sku LIKE 'PVN%' ORDER BY v.sku DESC LIMIT 1", nativeQuery = true)
+    String findMaxSku();
+
+    Optional<Variant> findByIdAndProductId(Long id, Long productId);
 }

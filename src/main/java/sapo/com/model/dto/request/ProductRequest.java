@@ -18,14 +18,14 @@ import java.util.stream.Collectors;
 @Setter
 public class ProductRequest {
     @Valid
-    @NotBlank
+    @NotBlank(message = "Product name is required")
     private String name;
     private Long categoryId;
     private Long brandId;
     private String description;
     private Set<String> imagePath;
     @Valid
-    @NotEmpty
+    @NotEmpty(message = "Set of variant is required")
     private Set<VariantRequest> variants;
 
     //Do not have brand, category, variant

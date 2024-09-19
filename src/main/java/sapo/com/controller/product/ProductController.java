@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sapo.com.exception.DataConflictException;
+import sapo.com.exception.ResourceNotFoundException;
 import sapo.com.model.dto.request.ProductRequest;
 import sapo.com.model.dto.request.VariantRequest;
 import sapo.com.model.dto.response.ProductResponse;
@@ -29,10 +31,13 @@ public class ProductController {
     public ResponseEntity<?> getListOfProducts(@RequestParam Long page,@RequestParam Long limit,@RequestParam String query){
         try{
             Set<ProductResponse> productResponse = productService.getListOfProducts(page,limit,query);
-            return new ResponseEntity<>(new ResponseObject("Get product info successfully", productResponse), HttpStatus.OK);
+            return new ResponseEntity<>(new ResponseObject("Lấy danh sách sản phẩm thành công", productResponse), HttpStatus.OK);
+        }catch(ResourceNotFoundException e){
+            log.error("Error: ",e);
+            return new ResponseEntity<>(new ResponseObject(e.getMessage(), null), HttpStatus.NOT_FOUND);
         }catch(Exception e){
             log.error("Error: ",e);
-            return null;
+            return new ResponseEntity<>(new ResponseObject(e.getMessage(), null), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -40,20 +45,26 @@ public class ProductController {
     public ResponseEntity<?> getListOfVariants(@RequestParam Long page,@RequestParam Long limit,@RequestParam String query){
         try{
             Set<VariantResponse> variantResponse = productService.getListOfVariants(page,limit,query);
-            return new ResponseEntity<>(new ResponseObject("Get product info successfully", variantResponse), HttpStatus.OK);
+            return new ResponseEntity<>(new ResponseObject("Lấy danh sách phiên bản thành công", variantResponse), HttpStatus.OK);
+        }catch(ResourceNotFoundException e){
+            log.error("Error: ",e);
+            return new ResponseEntity<>(new ResponseObject(e.getMessage(), null), HttpStatus.NOT_FOUND);
         }catch(Exception e){
             log.error("Error: ",e);
-            return null;
+            return new ResponseEntity<>(new ResponseObject(e.getMessage(), null), HttpStatus.BAD_REQUEST);
         }
     }
     @GetMapping("/{id}")
     public ResponseEntity<?> getProductById(@PathVariable Long id){
         try{
             ProductResponse productResponse = productService.getProductById(id);
-            return new ResponseEntity<>(new ResponseObject("Get product info successfully", productResponse), HttpStatus.OK);
+                return new ResponseEntity<>(new ResponseObject("Lấy thông tin sản phẩm thành công",  productResponse), HttpStatus.OK);
+        }catch(ResourceNotFoundException e){
+            log.error("Error: ",e);
+            return new ResponseEntity<>(new ResponseObject(e.getMessage(), null), HttpStatus.NOT_FOUND);
         }catch(Exception e){
             log.error("Error: ",e);
-            return null;
+            return new ResponseEntity<>(new ResponseObject(e.getMessage(), null), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -61,10 +72,13 @@ public class ProductController {
     public ResponseEntity<?> getVariantById(@PathVariable Long productId, @PathVariable Long variantId){
         try{
             VariantResponse variantResponse = productService.getVariantById(productId, variantId);
-            return new ResponseEntity<>(new ResponseObject("Get variant info successfully", variantResponse), HttpStatus.OK);
+            return new ResponseEntity<>(new ResponseObject("Lấy thông tin phiên bản thành công", variantResponse), HttpStatus.OK);
+        }catch(ResourceNotFoundException e){
+            log.error("Error: ",e);
+            return new ResponseEntity<>(new ResponseObject(e.getMessage(), null), HttpStatus.NOT_FOUND);
         }catch(Exception e){
             log.error("Error: ",e);
-            return null;
+            return new ResponseEntity<>(new ResponseObject(e.getMessage(), null), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -72,10 +86,16 @@ public class ProductController {
     public ResponseEntity<ResponseObject> createNewProduct(@Valid @RequestBody ProductRequest productRequest) {
         try{
             ProductResponse productResponse = productService.createNewProduct(productRequest);
-            return new ResponseEntity<>(new ResponseObject("Create new product successfully",productResponse), HttpStatus.CREATED);
-        }catch(Exception ex){
-            log.error("error",ex);
-            return null;
+            return new ResponseEntity<>(new ResponseObject("Tạo sản phẩm mới thành công",productResponse), HttpStatus.CREATED);
+        }catch(ResourceNotFoundException e){
+            log.error("Error: ",e);
+            return new ResponseEntity<>(new ResponseObject(e.getMessage(), null), HttpStatus.NOT_FOUND);
+        }catch(DataConflictException e){
+            log.error("Error: ",e);
+            return new ResponseEntity<>(new ResponseObject(e.getMessage(), null), HttpStatus.CONFLICT);
+        }catch(Exception e){
+            log.error("Error: ",e);
+            return new ResponseEntity<>(new ResponseObject(e.getMessage(), null), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -83,22 +103,34 @@ public class ProductController {
     public ResponseEntity<ResponseObject> createNewVariant(@PathVariable Long productId,@Valid @RequestBody VariantRequest variantRequest) {
         try{
             VariantResponse variantResponse = productService.createNewVariant(productId,variantRequest);
-            return new ResponseEntity<>(new ResponseObject("Create new variant successfully",variantResponse), HttpStatus.CREATED);
-        }catch(Exception ex){
-            log.error("error",ex);
-            return null;
+            return new ResponseEntity<>(new ResponseObject("Tạo phiên bản mới thành công",variantResponse), HttpStatus.CREATED);
+        }catch(ResourceNotFoundException e){
+            log.error("Error: ",e);
+            return new ResponseEntity<>(new ResponseObject(e.getMessage(), null), HttpStatus.NOT_FOUND);
+        }catch(DataConflictException e){
+            log.error("Error: ",e);
+            return new ResponseEntity<>(new ResponseObject(e.getMessage(), null), HttpStatus.CONFLICT);
+        }catch(Exception e){
+            log.error("Error: ",e);
+            return new ResponseEntity<>(new ResponseObject(e.getMessage(), null), HttpStatus.BAD_REQUEST);
         }
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}/edit")
     public ResponseEntity<ResponseObject> updateProduct(@PathVariable Long id,@Valid @RequestBody ProductRequest productRequest) {
 
         try{
             ProductResponse productResponse = productService.updateProduct(id, productRequest);
-            return new ResponseEntity<>(new ResponseObject("Product updated successfully", productResponse), HttpStatus.OK);
+            return new ResponseEntity<>(new ResponseObject("Cập nhật thông tin sản phẩm thành công", productResponse), HttpStatus.OK);
+        }catch(ResourceNotFoundException e){
+            log.error("Error: ",e);
+            return new ResponseEntity<>(new ResponseObject(e.getMessage(), null), HttpStatus.NOT_FOUND);
+        }catch(DataConflictException e){
+            log.error("Error: ",e);
+            return new ResponseEntity<>(new ResponseObject(e.getMessage(), null), HttpStatus.CONFLICT);
         }catch(Exception e){
             log.error("Error: ",e);
-            return null;
+            return new ResponseEntity<>(new ResponseObject(e.getMessage(), null), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -106,12 +138,13 @@ public class ProductController {
     public ResponseEntity<?> deleteProductById(@PathVariable Long id){
         try{
             Boolean checkk = productService.deleteProductById(id);
-            if(checkk)
-                return new ResponseEntity<>("Delete product successfully", HttpStatus.OK);
-            else return new ResponseEntity<>("Fail to delete product", HttpStatus.BAD_REQUEST);
-        }catch( Exception e){
+            return new ResponseEntity<>("Xóa sản phẩm thành công", HttpStatus.OK);
+        }catch(ResourceNotFoundException e){
             log.error("Error: ",e);
-            return null;
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }catch(Exception e){
+            log.error("Error: ",e);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -119,12 +152,13 @@ public class ProductController {
     public ResponseEntity<?> deleteVariantById(@PathVariable Long productId, @PathVariable Long variantId){
         try{
             Boolean checkk = productService.deleteVariantById(productId, variantId);
-            if(checkk)
-            return new ResponseEntity<>("Delete variant successfully", HttpStatus.OK);
-            else return new ResponseEntity<>("Fail to delete variant", HttpStatus.BAD_REQUEST);
-        }catch( Exception e){
+            return new ResponseEntity<>("Xóa phiên bản thành công", HttpStatus.OK);
+        }catch(ResourceNotFoundException e){
             log.error("Error: ",e);
-            return null;
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }catch(Exception e){
+            log.error("Error: ",e);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 }

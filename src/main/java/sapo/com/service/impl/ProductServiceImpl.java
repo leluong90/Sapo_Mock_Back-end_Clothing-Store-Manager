@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import sapo.com.exception.DataConflictException;
 import sapo.com.exception.ResourceNotFoundException;
 import sapo.com.model.dto.request.ProductRequest;
 import sapo.com.model.dto.request.VariantRequest;
@@ -47,180 +49,206 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ImagePathRepository imagePathRepository;
 
-    public Set<ProductResponse> getListOfProducts(Long page, Long limit,String queryString){
-        try{
-            Set<Product> products = productRepository.getListOfProducts(page, limit, queryString);
-            Set<ProductResponse> productsResponse = new HashSet<>();
-            for(Product product: products){
-                productsResponse.add(product.transferToResponse());
-            }
+    public Set<ProductResponse> getListOfProducts(Long page, Long limit, String queryString) {
+        Set<Product> products = productRepository.getListOfProducts(page, limit, queryString);
+        Set<ProductResponse> productsResponse = new HashSet<>();
+        for (Product product : products) {
+            productsResponse.add(product.transferToResponse());
+        }
+        if(!productsResponse.isEmpty())
             return productsResponse;
-        }catch(Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        else throw new ResourceNotFoundException("Sản phẩm không tồn tại");
     }
 
-    public Set<VariantResponse> getListOfVariants(Long page, Long limit,String queryString){
-        try{
-            Set<Variant> variants = variantRepository.getListOfVariants(page, limit, queryString);
-            Set<VariantResponse> variantsResponse = new HashSet<>();
-            for(Variant variant: variants){
-                variantsResponse.add(variant.transferToResponse());
-            }
+    public Set<VariantResponse> getListOfVariants(Long page, Long limit, String queryString) {
+        Set<Variant> variants = variantRepository.getListOfVariants(page, limit, queryString);
+        Set<VariantResponse> variantsResponse = new HashSet<>();
+        for (Variant variant : variants) {
+            variantsResponse.add(variant.transferToResponse());
+        }
+        if(!variantsResponse.isEmpty())
             return variantsResponse;
-        }catch(Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        else throw new ResourceNotFoundException("Phiên bản không tồn tại");
     }
 
-    public ProductResponse getProductById(Long id){
-        try{
-            Optional<Product> product = productRepository.findById(id);
-            if (product.isPresent()) {
-                ProductResponse productResponse = product.get().transferToResponse();
-                statisticSizeColorMaterial(productResponse);
-                return productResponse;
-            } else {
-                throw new ResourceNotFoundException("Product id not found");
-            }
-        }catch(Exception e){
-            log.error("Error: ",e);
-            return null;
-        }
-    }
-
-    public VariantResponse getVariantById(Long productId, Long variantId){
-        try{
-            Optional<Variant> variant = variantRepository.findById(variantId);
-            if (variant.isPresent()) {
-                return variant.get().transferToResponse();
-            } else {
-                throw new ResourceNotFoundException("Variant id not found");
-            }
-        }catch(Exception e){
-            log.error("Error: ",e);
-            return null;
-        }
-    }
-
-    @Transactional
-    public ProductResponse createNewProduct(ProductRequest productRequest){
-        try{
-            Category category = categoryRepository.findById(productRequest.getCategoryId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
-            Brand brand = brandRepository.findById(productRequest.getBrandId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Brand id not found"));
-
-            // Map ProductRequest to Product entity
-            Product product= productRequest.transferToProduct();
-            product.setBrand(brand);
-            product.setCategory(category);
-            Product savedProduct = productRepository.save(product);
-            entityManager.refresh(savedProduct);
-            ProductResponse productResponse = savedProduct.transferToResponse();
-            statisticSizeColorMaterial(productResponse);
-            return productResponse;
-        }catch(Exception e){
-            log.error("error",e);
-            return null;
-        }
-    }
-    @Transactional
-    public VariantResponse createNewVariant(Long productId,VariantRequest variantRequest ){
-
-        try{
-
-            Product product = productRepository.findById(productId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Product id not found"));
-//        product.getVariants().add(variantRequest.transferToVariant());
-//            product.setUpdatedOn(LocalDateTime.now());
-            variantRequest.setProductId(productId);
-            Variant variant= variantRequest.transferToVariant();
-            variant.setProduct(product);
-            Variant savedVariant = variantRepository.save(variant);
-            product.setUpdatedOn(LocalDateTime.now());
-            productRepository.save(product);
-            entityManager.refresh(savedVariant);
-            return savedVariant.transferToResponse();
-        }catch(Exception e){
-            log.error("error",e);
-            return null;
-        }
-    }
-
-    @Transactional
-    public ProductResponse updateProduct(Long id,ProductRequest productRequest){
-        try{
-            Product product = productRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Product id not found"));
-            Category category = categoryRepository.findById(productRequest.getCategoryId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
-            Brand brand = brandRepository.findById(productRequest.getBrandId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Brand id not found"));
-            System.out.println(product.getStatus());
-            product.setBrand(brand);
-            product.setCategory(category);
-            product.setDescription(productRequest.getDescription());
-            product.setName(productRequest.getName());
-            Map<Long, VariantRequest> existingVariantsMap = productRequest.getVariants().stream()
-                    .collect(Collectors.toMap(VariantRequest::getId, Function.identity()));
+    public ProductResponse getProductById(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Sản phẩm không tồn tại hoặc đã bị xóa"));
+        if (product.getStatus()) {
             for (Variant variant : product.getVariants()) {
-                variant.updateFromRequest(existingVariantsMap.get(variant.getId()));
+                if (!variant.getStatus()) {
+                    product.getVariants().remove(variant);
+                }
             }
-
-            product.getImagePath().clear();
-            for (String imagePath : productRequest.getImagePath()) {
-                ImagePath image = new ImagePath();
-                image.setPath(imagePath);
-                image.setProduct(product);
-                product.getImagePath().add(image);
-            }
-            product.setUpdatedOn(LocalDateTime.now());
-            Product savedProduct = productRepository.saveAndFlush(product);
-            entityManager.refresh(savedProduct);
-            ProductResponse productResponse = savedProduct.transferToResponse();
+            ProductResponse productResponse = product.transferToResponse();
             statisticSizeColorMaterial(productResponse);
             return productResponse;
-        }catch(Exception e){
-            log.error("error",e);
-            return null;
-        }
+        } else
+            throw new ResourceNotFoundException("Sản phẩm không tồn tại hoặc đã bị xóa");
     }
 
-    public void statisticSizeColorMaterial(ProductResponse productResponse){
+    public VariantResponse getVariantById(Long productId, Long variantId) {
+        Variant variant = variantRepository.findByIdAndProductId(productId, variantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Phiên bản không tồn tại hoặc đã bị xóa"));
+        if (variant.getStatus()) {
+            VariantResponse variantResponse = variant.transferToResponse();
+            return variantResponse;
+        } else
+            throw new ResourceNotFoundException("Phiên bản không tồn tại hoặc đã bị xóa");
+    }
+
+    @Transactional
+    public ProductResponse createNewProduct(ProductRequest productRequest) {
+        Category category = categoryRepository.findById(productRequest.getCategoryId())
+                .orElseThrow(() -> new ResourceNotFoundException("Loại sản phẩm không tồn tại hoặc đã bị xóa"));
+        Brand brand = brandRepository.findById(productRequest.getBrandId())
+                .orElseThrow(() -> new ResourceNotFoundException("Nhãn hiệu không tồn tại hoặc đã bị xóa"));
+        //Check sku and variant
+        Set<String> variantPropertiesSet = new HashSet<>();
+        for (VariantRequest variantRequest : productRequest.getVariants()) {
+            String sku = variantRequest.getSku();
+            if (sku != "" && sku.startsWith("PVN")) {
+                throw new DataConflictException("Mã loại không được có tiền tố " + "PVN");
+            }
+            if (variantRepository.existsBySku(sku)) {
+                throw new DataConflictException("SKU " + sku + " đã tồn tại.");
+            }
+            String variantKey = variantRequest.getSize() + "-" +
+                    variantRequest.getColor() + "-" +
+                    variantRequest.getMaterial();
+            // Check if combination of size, color, and material is unique
+            if (!variantPropertiesSet.add(variantKey)) {
+                throw new DataConflictException("Thuộc tính đã bị trùng: " + variantKey);
+            }
+        }
+        // Map ProductRequest to Product entity
+        Product product = productRequest.transferToProduct();
+        product.setBrand(brand);
+        product.setCategory(category);
+        Product savedProduct = productRepository.save(product);
+        entityManager.refresh(savedProduct);
+        ProductResponse productResponse = savedProduct.transferToResponse();
+        statisticSizeColorMaterial(productResponse);
+        return productResponse;
+    }
+
+    @Transactional
+    public VariantResponse createNewVariant(Long productId, VariantRequest variantRequest) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Sản phẩm không tồn tại hoặc đã bị xóa"));
+        //Check sku
+        String sku = variantRequest.getSku();
+        if (sku != "" && sku.startsWith("PVN")) {
+            throw new DataConflictException("Mã loại không được có tiền tố " + "PVN");
+        }
+        if (variantRepository.existsBySku(sku)) {
+            throw new DataConflictException("SKU " + sku + " đã tồn tại.");
+        }
+        //check variant
+        String newVariantKey = variantRequest.getSize() + "-" +
+                variantRequest.getColor() + "-" +
+                variantRequest.getMaterial();
+        for (Variant variant : product.getVariants()) {
+            String variantKey = variant.getSize() + "-" +
+                    variant.getColor() + "-" +
+                    variant.getMaterial();
+            if (newVariantKey.equals(variantKey)) {
+                throw new DataConflictException("Thuộc tính đã bị trùng: " + variantKey);
+            }
+        }
+        variantRequest.setProductId(productId);
+        Variant variant = variantRequest.transferToVariant();
+        variant.setProduct(product);
+        Variant savedVariant = variantRepository.save(variant);
+        product.setUpdatedOn(LocalDateTime.now());
+        productRepository.save(product);
+        entityManager.refresh(savedVariant);
+        return savedVariant.transferToResponse();
+    }
+
+    @Transactional
+    public ProductResponse updateProduct(Long id, ProductRequest productRequest) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Sản phẩm không tồn tại hoặc đã bị xóa"));
+        Category category = categoryRepository.findById(productRequest.getCategoryId())
+                .orElseThrow(() -> new ResourceNotFoundException("Loại sản phẩm không tồn tại hoặc đã bị xóa"));
+        Brand brand = brandRepository.findById(productRequest.getBrandId())
+                .orElseThrow(() -> new ResourceNotFoundException("Nhãn hiệu không tồn tại hoặc đã bị xóa"));
+        //check properties of variant
+        Set<String> variantPropertiesSet = new HashSet<>();
+        for (VariantRequest variantRequest : productRequest.getVariants()) {
+            String variantKey = variantRequest.getSize() + "-" +
+                    variantRequest.getColor() + "-" +
+                    variantRequest.getMaterial();
+            // Check if combination of size, color, and material is unique
+            if (!variantPropertiesSet.add(variantKey)) {
+                throw new DataConflictException("Thuộc tính đã bị trùng: " + variantKey);
+            }
+        }
+
+        product.setBrand(brand);
+        product.setCategory(category);
+        product.setDescription(productRequest.getDescription());
+        product.setName(productRequest.getName());
+        Map<Long, VariantRequest> existingVariantsMap = productRequest.getVariants().stream()
+                .collect(Collectors.toMap(VariantRequest::getId, Function.identity()));
+        //check sku of variants
+        for (Variant variant : product.getVariants()) {
+            String newSku = existingVariantsMap.get(variant.getId()).getSku();
+            if (newSku != "" && variant.getSku() != newSku) {
+                if (newSku.startsWith("PVN")) {
+                    throw new DataConflictException("Mã loại không được có tiền tố " + "PVN");
+                }
+                if (variantRepository.existsBySku(newSku)) {
+                    throw new DataConflictException("SKU " + newSku + " đã tồn tại.");
+                }
+            }
+            variant.updateFromRequest(existingVariantsMap.get(variant.getId()));
+        }
+        product.getImagePath().clear();
+        for (String imagePath : productRequest.getImagePath()) {
+            ImagePath image = new ImagePath();
+            image.setPath(imagePath);
+            image.setProduct(product);
+            product.getImagePath().add(image);
+        }
+        product.setUpdatedOn(LocalDateTime.now());
+        Product savedProduct = productRepository.saveAndFlush(product);
+        entityManager.refresh(savedProduct);
+        ProductResponse productResponse = savedProduct.transferToResponse();
+        statisticSizeColorMaterial(productResponse);
+        return productResponse;
+    }
+
+    public void statisticSizeColorMaterial(ProductResponse productResponse) {
         productResponse.setSize(variantRepository.findDistinctSizesByProductId(productResponse.getId()));
         productResponse.setColor(variantRepository.findDistinctColorsByProductId(productResponse.getId()));
         productResponse.setMaterial(variantRepository.findDistinctMaterialsByProductId(productResponse.getId()));
     }
 
     @Transactional
-    public  Boolean deleteProductById(Long id){
-        try{
-            Product product = productRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Product id not found"));
-            productRepository.deleteProductById(id);
-            variantRepository.deleteAllVariantOfProduct(id);
-            return true;
-        }catch(Exception ex){
-            log.error("error ",ex);
-            return false;
-        }
+    public Boolean deleteProductById(Long id) {
+
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Sản phẩm không tồn tại hoặc đã bị xóa"));
+        productRepository.deleteProductById(id);
+        variantRepository.deleteAllVariantOfProduct(id);
+        return true;
+
     }
 
     @Transactional
-    public  Boolean deleteVariantById(Long productId, Long variantId){
-        try{
-            Product product = productRepository.findById(productId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Product id not found"));
-            Variant variant = variantRepository.findById(variantId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Product id not found"));
+    public Boolean deleteVariantById(Long productId, Long variantId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Sản phẩm không tồn tại hoặc đã bị xóa"));
+        Variant variant = variantRepository.findById(variantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Phiên bản không tồn tại hoặc đã bị xóa"));
+        if(product.getVariants().size()==1){
+            deleteProductById(productId);
+        }else{
             variantRepository.deleteVariantById(variantId);
-            return true;
-        }catch(Exception ex){
-            log.error("error ",ex);
-            return false;
         }
+        return true;
+
     }
 }

@@ -28,4 +28,11 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     )
     Set<Category> getListOfCategories(Long page, Long limit, String query );
 
+    boolean existsByCode(String code);
+
+    @Query(value = "SELECT c.code FROM Category c WHERE c.code LIKE 'PGN%' ORDER BY c.code DESC LIMIT 1", nativeQuery = true)
+    String findMaxCode();
+
+    @Query(value = "SELECT p FROM Product p WHERE p.category.id = :id AND p.status = true")
+    Set<Product> existProduct(@Param("id") Long id);
 }

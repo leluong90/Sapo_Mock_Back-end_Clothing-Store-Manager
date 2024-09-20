@@ -47,11 +47,11 @@ public class User {
     )
     private Set<Role> roles ;
 
-    @OneToMany(fetch = FetchType.LAZY , mappedBy = "user" , cascade = CascadeType.ALL)
-    private List<Orders> orders ;
+//    @OneToMany(fetch = FetchType.LAZY , mappedBy = "user" , cascade = CascadeType.ALL)
+//    private List<Orders> orders ;
 
-    @OneToMany(fetch = FetchType.EAGER , mappedBy = "user" , cascade = CascadeType.ALL)
-    private List<Variants> variants ;
+//    @OneToMany(fetch = FetchType.EAGER , mappedBy = "user" , cascade = CascadeType.ALL)
+//    private List<Variants> variants ;
 
 
     @JsonFormat(shape = JsonFormat.Shape.STRING , pattern = "dd-MM-yyyy")

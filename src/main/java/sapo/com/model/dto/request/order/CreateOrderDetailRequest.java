@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class OrderDetailRequest {
+public class CreateOrderDetailRequest {
     private Long variantId;
     private int quantity;
     private BigDecimal subTotal;

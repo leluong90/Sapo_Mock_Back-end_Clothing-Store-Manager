@@ -19,5 +19,5 @@ public class CreateOrderRequest {
     private BigDecimal cashRepay;
     private BigDecimal totalPayment;
     private String paymentType;
-    private Set<OrderDetailRequest> orderLineItems;
+    private Set<CreateOrderDetailRequest> orderLineItems;
 }

@@ -13,7 +13,7 @@ import lombok.*;
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id ;
+    private Integer id ;
     private String name  ;
 }
 //    @OneToMany(mappedBy = "roles"  , fetch = FetchType.EAGER)

@@ -16,7 +16,7 @@ import java.util.Collection;
 @Data
 @Builder
 public class UserPrincipal implements UserDetails {
-    private Long id ;
+    private Integer id ;
     private String email ;
     private String name ;
     private String password ;

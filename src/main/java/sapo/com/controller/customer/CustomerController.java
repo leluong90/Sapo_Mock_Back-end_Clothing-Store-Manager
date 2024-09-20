@@ -13,7 +13,7 @@ import sapo.com.model.entity.Customer;
 import sapo.com.service.CustomerService;
 
 @RestController
-public class CustomerRestController {
+public class CustomerController {
 
     @Autowired private CustomerService customerService;
 

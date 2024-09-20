@@ -19,6 +19,30 @@ public class ExceptionHandler extends RuntimeException {
                         .build()
         );
     }
+    // Xử lý ngoại lệ CustomerNotFoundException
+    @org.springframework.web.bind.annotation.ExceptionHandler(CustomerNotFoundException.class)
+    public ResponseEntity<?> handleCustomerNotFoundException(CustomerNotFoundException ex) {
+        // Tạo thông báo lỗi
+        String errorMessage = ex.getMessage();
+
+        // Trả về thông báo lỗi và mã trạng thái 404 NOT FOUND
+        return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
+    }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<?> handleStaffNotFoundException(UserNotFoundException ex) {
+        // Tạo thông báo lỗi
+        String errorMessage = ex.getMessage();
+
+        // Trả về thông báo lỗi và mã trạng thái 404 NOT FOUND
+        return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
+    }
+    @org.springframework.web.bind.annotation.ExceptionHandler(IncorrectPasswordException.class)
+    public ResponseEntity<?> handleIncorrectPasswordException(IncorrectPasswordException ex) {
+        String errorMessage = ex.getMessage();
+        return new ResponseEntity<>(errorMessage, HttpStatus.FORBIDDEN);
+    }
+
 
 
 }

@@ -62,12 +62,27 @@ public class OrderServiceImpl implements OrderService {
         orderDetails.forEach(createOrderDetailRequest -> {
             Variant variant = variantRepository.findById(createOrderDetailRequest.getVariantId())
                     .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại"));
+            if(createOrderDetailRequest.getQuantity() < 0) {
+                throw new RuntimeException("Số lượng sản phẩm không hợp lệ");
+            }
+            if(createOrderDetailRequest.getQuantity() > variant.getQuantity()) {
+                throw new RuntimeException("Số lượng sản phẩm không đủ");
+            }
+
             OrderDetail orderDetail = new OrderDetail();
             orderDetail.setOrder(newOrder);
             orderDetail.setVariant(variant);
             orderDetail.setQuantity(createOrderDetailRequest.getQuantity());
             orderDetail.setSubTotal(createOrderDetailRequest.getSubTotal());
             orderDetailRepository.save(orderDetail);
+
+            // Cập nhật số lượng sản phẩm
+            variant.setQuantity(variant.getQuantity() - createOrderDetailRequest.getQuantity());
+            variantRepository.save(variant);
+
+            // Thêm mã đơn hàng
+            newOrder.setCode("SON" + String.format("%05d", newOrder.getId()));
+            orderRepository.save(newOrder);
         });
 
         return "Tạo đơn hàng thành công";

@@ -195,7 +195,7 @@ public class ProductServiceImpl implements ProductService {
         //check sku of variants
         for (Variant variant : product.getVariants()) {
             String newSku = existingVariantsMap.get(variant.getId()).getSku();
-            if (newSku != "" && variant.getSku() != newSku) {
+            if (newSku != "" && !newSku.equals(variant.getSku())) {
                 if (newSku.startsWith("PVN")) {
                     throw new DataConflictException("Mã loại không được có tiền tố " + "PVN");
                 }

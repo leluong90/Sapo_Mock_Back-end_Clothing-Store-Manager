@@ -78,11 +78,13 @@ public class BrandServiceImpl implements BrandService {
         Brand brand = brandRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Nhãn hiệu không tồn tại hoặc đã bị xóa"));
         String code = brandRequest.getCode();
-        if (code != "" && code.startsWith("PBN")) {
-            throw new DataConflictException("Mã nhãn hiệu không được có tiền tố " + "PBN");
-        }
-        if (code != "" && brandRepository.existsByCode(code)) {
-            throw new DataConflictException("Code " + code + " đã tồn tại.");
+        if(code.equals(brand.getCode()) && code != ""){
+            if (code.startsWith("PBN")) {
+                throw new DataConflictException("Mã nhãn hiệu không được có tiền tố " + "PBN");
+            }
+            if (brandRepository.existsByCode(code)) {
+                throw new DataConflictException("Code " + code + " đã tồn tại.");
+            }
         }
         brand.setName(brandRequest.getName());
         if (code != "") {

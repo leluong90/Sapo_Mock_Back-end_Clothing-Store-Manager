@@ -25,140 +25,62 @@ public class ProductController {
     private static final Logger log = LoggerFactory.getLogger(ProductController.class);
 
     @Autowired
-    private ProductServiceImpl productService ;
+    private ProductServiceImpl productService;
 
     @GetMapping
-    public ResponseEntity<?> getListOfProducts(@RequestParam Long page,@RequestParam Long limit,@RequestParam String query){
-        try{
-            Set<ProductResponse> productResponse = productService.getListOfProducts(page,limit,query);
-            return new ResponseEntity<>(new ResponseObject("Lấy danh sách sản phẩm thành công", productResponse), HttpStatus.OK);
-        }catch(ResourceNotFoundException e){
-            log.error("Error: ",e);
-            return new ResponseEntity<>(new ResponseObject(e.getMessage(), null), HttpStatus.NOT_FOUND);
-        }catch(Exception e){
-            log.error("Error: ",e);
-            return new ResponseEntity<>(new ResponseObject(e.getMessage(), null), HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<?> getListOfProducts(@RequestParam Long page, @RequestParam Long limit, @RequestParam String query) {
+        Set<ProductResponse> productResponse = productService.getListOfProducts(page, limit, query);
+        return new ResponseEntity<>(new ResponseObject("Lấy danh sách sản phẩm thành công", productResponse), HttpStatus.OK);
     }
 
     @GetMapping("/variants/{id}")
-    public ResponseEntity<?> getListOfVariants(@RequestParam Long page,@RequestParam Long limit,@RequestParam String query){
-        try{
-            Set<VariantResponse> variantResponse = productService.getListOfVariants(page,limit,query);
-            return new ResponseEntity<>(new ResponseObject("Lấy danh sách phiên bản thành công", variantResponse), HttpStatus.OK);
-        }catch(ResourceNotFoundException e){
-            log.error("Error: ",e);
-            return new ResponseEntity<>(new ResponseObject(e.getMessage(), null), HttpStatus.NOT_FOUND);
-        }catch(Exception e){
-            log.error("Error: ",e);
-            return new ResponseEntity<>(new ResponseObject(e.getMessage(), null), HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<?> getListOfVariants(@RequestParam Long page, @RequestParam Long limit, @RequestParam String query) {
+        Set<VariantResponse> variantResponse = productService.getListOfVariants(page, limit, query);
+        return new ResponseEntity<>(new ResponseObject("Lấy danh sách phiên bản thành công", variantResponse), HttpStatus.OK);
     }
+
     @GetMapping("/{id}")
-    public ResponseEntity<?> getProductById(@PathVariable Long id){
-        try{
-            ProductResponse productResponse = productService.getProductById(id);
-                return new ResponseEntity<>(new ResponseObject("Lấy thông tin sản phẩm thành công",  productResponse), HttpStatus.OK);
-        }catch(ResourceNotFoundException e){
-            log.error("Error: ",e);
-            return new ResponseEntity<>(new ResponseObject(e.getMessage(), null), HttpStatus.NOT_FOUND);
-        }catch(Exception e){
-            log.error("Error: ",e);
-            return new ResponseEntity<>(new ResponseObject(e.getMessage(), null), HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<?> getProductById(@PathVariable Long id) {
+        ProductResponse productResponse = productService.getProductById(id);
+        return new ResponseEntity<>(new ResponseObject("Lấy thông tin sản phẩm thành công", productResponse), HttpStatus.OK);
     }
 
     @GetMapping("/{productId}/variants/{variantId}")
-    public ResponseEntity<?> getVariantById(@PathVariable Long productId, @PathVariable Long variantId){
-        try{
-            VariantResponse variantResponse = productService.getVariantById(productId, variantId);
-            return new ResponseEntity<>(new ResponseObject("Lấy thông tin phiên bản thành công", variantResponse), HttpStatus.OK);
-        }catch(ResourceNotFoundException e){
-            log.error("Error: ",e);
-            return new ResponseEntity<>(new ResponseObject(e.getMessage(), null), HttpStatus.NOT_FOUND);
-        }catch(Exception e){
-            log.error("Error: ",e);
-            return new ResponseEntity<>(new ResponseObject(e.getMessage(), null), HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<?> getVariantById(@PathVariable Long productId, @PathVariable Long variantId) {
+        VariantResponse variantResponse = productService.getVariantById(productId, variantId);
+        return new ResponseEntity<>(new ResponseObject("Lấy thông tin phiên bản thành công", variantResponse), HttpStatus.OK);
     }
 
     @PostMapping("/create")
     public ResponseEntity<ResponseObject> createNewProduct(@Valid @RequestBody ProductRequest productRequest) {
-        try{
-            ProductResponse productResponse = productService.createNewProduct(productRequest);
-            return new ResponseEntity<>(new ResponseObject("Tạo sản phẩm mới thành công",productResponse), HttpStatus.CREATED);
-        }catch(ResourceNotFoundException e){
-            log.error("Error: ",e);
-            return new ResponseEntity<>(new ResponseObject(e.getMessage(), null), HttpStatus.NOT_FOUND);
-        }catch(DataConflictException e){
-            log.error("Error: ",e);
-            return new ResponseEntity<>(new ResponseObject(e.getMessage(), null), HttpStatus.CONFLICT);
-        }catch(Exception e){
-            log.error("Error: ",e);
-            return new ResponseEntity<>(new ResponseObject(e.getMessage(), null), HttpStatus.BAD_REQUEST);
-        }
+        ProductResponse productResponse = productService.createNewProduct(productRequest);
+        return new ResponseEntity<>(new ResponseObject("Tạo sản phẩm mới thành công", productResponse), HttpStatus.CREATED);
     }
 
     @PostMapping("/{productId}/variants/create")
-    public ResponseEntity<ResponseObject> createNewVariant(@PathVariable Long productId,@Valid @RequestBody VariantRequest variantRequest) {
-        try{
-            VariantResponse variantResponse = productService.createNewVariant(productId,variantRequest);
-            return new ResponseEntity<>(new ResponseObject("Tạo phiên bản mới thành công",variantResponse), HttpStatus.CREATED);
-        }catch(ResourceNotFoundException e){
-            log.error("Error: ",e);
-            return new ResponseEntity<>(new ResponseObject(e.getMessage(), null), HttpStatus.NOT_FOUND);
-        }catch(DataConflictException e){
-            log.error("Error: ",e);
-            return new ResponseEntity<>(new ResponseObject(e.getMessage(), null), HttpStatus.CONFLICT);
-        }catch(Exception e){
-            log.error("Error: ",e);
-            return new ResponseEntity<>(new ResponseObject(e.getMessage(), null), HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<ResponseObject> createNewVariant(@PathVariable Long productId, @Valid @RequestBody VariantRequest variantRequest) {
+        VariantResponse variantResponse = productService.createNewVariant(productId, variantRequest);
+        return new ResponseEntity<>(new ResponseObject("Tạo phiên bản mới thành công", variantResponse), HttpStatus.CREATED);
+
     }
 
     @PutMapping("/{id}/edit")
-    public ResponseEntity<ResponseObject> updateProduct(@PathVariable Long id,@Valid @RequestBody ProductRequest productRequest) {
+    public ResponseEntity<ResponseObject> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductRequest productRequest) {
 
-        try{
-            ProductResponse productResponse = productService.updateProduct(id, productRequest);
-            return new ResponseEntity<>(new ResponseObject("Cập nhật thông tin sản phẩm thành công", productResponse), HttpStatus.OK);
-        }catch(ResourceNotFoundException e){
-            log.error("Error: ",e);
-            return new ResponseEntity<>(new ResponseObject(e.getMessage(), null), HttpStatus.NOT_FOUND);
-        }catch(DataConflictException e){
-            log.error("Error: ",e);
-            return new ResponseEntity<>(new ResponseObject(e.getMessage(), null), HttpStatus.CONFLICT);
-        }catch(Exception e){
-            log.error("Error: ",e);
-            return new ResponseEntity<>(new ResponseObject(e.getMessage(), null), HttpStatus.BAD_REQUEST);
-        }
+        ProductResponse productResponse = productService.updateProduct(id, productRequest);
+        return new ResponseEntity<>(new ResponseObject("Cập nhật thông tin sản phẩm thành công", productResponse), HttpStatus.OK);
+
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteProductById(@PathVariable Long id){
-        try{
-            Boolean checkk = productService.deleteProductById(id);
-            return new ResponseEntity<>("Xóa sản phẩm thành công", HttpStatus.OK);
-        }catch(ResourceNotFoundException e){
-            log.error("Error: ",e);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        }catch(Exception e){
-            log.error("Error: ",e);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<?> deleteProductById(@PathVariable Long id) {
+        Boolean checkk = productService.deleteProductById(id);
+        return new ResponseEntity<>("Xóa sản phẩm thành công", HttpStatus.OK);
     }
 
     @DeleteMapping("/{productId}/variants/{variantId}")
-    public ResponseEntity<?> deleteVariantById(@PathVariable Long productId, @PathVariable Long variantId){
-        try{
-            Boolean checkk = productService.deleteVariantById(productId, variantId);
-            return new ResponseEntity<>("Xóa phiên bản thành công", HttpStatus.OK);
-        }catch(ResourceNotFoundException e){
-            log.error("Error: ",e);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        }catch(Exception e){
-            log.error("Error: ",e);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<?> deleteVariantById(@PathVariable Long productId, @PathVariable Long variantId) {
+        Boolean checkk = productService.deleteVariantById(productId, variantId);
+        return new ResponseEntity<>("Xóa phiên bản thành công", HttpStatus.OK);
     }
 }

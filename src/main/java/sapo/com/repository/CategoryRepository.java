@@ -5,6 +5,9 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import sapo.com.model.dto.response.CategoryResponse;
+
 import sapo.com.model.entity.Category;
 import sapo.com.model.entity.Product;
 
@@ -27,4 +30,12 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     )
     Set<Category> getListOfCategories(Long page, Long limit, String query );
 
+    boolean existsByCode(String code);
+
+    @Query(value = "SELECT c.code FROM Category c WHERE c.code LIKE 'PGN%' ORDER BY c.code DESC LIMIT 1", nativeQuery = true)
+    String findMaxCode();
+
+    @Query(value = "SELECT p FROM Product p WHERE p.category.id = :id AND p.status = true")
+    Set<Product> existProduct(@Param("id") Long id);
 }
+

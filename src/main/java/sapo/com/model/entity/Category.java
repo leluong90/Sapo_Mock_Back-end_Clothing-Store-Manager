@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
+import sapo.com.model.dto.response.CategoryResponse;
+
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -36,4 +38,18 @@ public class Category {
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private Set<Product> products;
+
+    public CategoryResponse transferToResponse(){
+        CategoryResponse categoryResponse = new CategoryResponse();
+        categoryResponse.setId(this.id);
+        categoryResponse.setName(this.name);
+        categoryResponse.setCode(this.code);
+        categoryResponse.setDescription(this.description);
+        categoryResponse.setStatus(this.status);
+        categoryResponse.setCreatedOn(this.createdOn);
+        categoryResponse.setUpdatedOn(this.updatedOn);
+        return categoryResponse;
+    }
+
+
 }

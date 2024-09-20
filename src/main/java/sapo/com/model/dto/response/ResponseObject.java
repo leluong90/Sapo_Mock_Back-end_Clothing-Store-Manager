@@ -12,6 +12,11 @@ import org.springframework.http.HttpStatus;
 @Builder
 public class ResponseObject {
     private String message ;
-    private HttpStatus status ;
+//    private HttpStatus status ;
     private Object data ;
+
+//    public ResponseObject(String message, Object data) {
+//        this.message = message;
+//        this.data = data;
+//    }
 }

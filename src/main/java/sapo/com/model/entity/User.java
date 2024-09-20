@@ -20,6 +20,7 @@ import java.util.Set;
 @Setter
 @Data
 @Builder
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,5 +58,6 @@ public class User {
     @JsonFormat(shape = JsonFormat.Shape.STRING , pattern = "dd-MM-yyyy")
     private LocalDateTime createdOn ;
     @JsonFormat(shape = JsonFormat.Shape.STRING , pattern = "dd-MM-yyyy")
-    private LocalDateTime updateOn ;
+    private LocalDateTime updatedOn ;
+
 }

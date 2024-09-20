@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import sapo.com.model.dto.response.CategoryResponse;
 
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -37,7 +38,6 @@ public class Category {
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private Set<Product> products;
-
 
     public CategoryResponse transferToResponse(){
         CategoryResponse categoryResponse = new CategoryResponse();

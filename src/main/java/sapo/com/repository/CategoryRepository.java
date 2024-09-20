@@ -5,7 +5,9 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
 import sapo.com.model.dto.response.CategoryResponse;
+
 import sapo.com.model.entity.Category;
 import sapo.com.model.entity.Product;
 
@@ -36,3 +38,4 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     @Query(value = "SELECT p FROM Product p WHERE p.category.id = :id AND p.status = true")
     Set<Product> existProduct(@Param("id") Long id);
 }
+

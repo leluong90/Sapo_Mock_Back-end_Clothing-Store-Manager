@@ -12,3 +12,4 @@ public interface ImagePathRepository extends JpaRepository<ImagePath, Long>{
     @Transactional
     void deleteByProductId(Long productId);
 }
+

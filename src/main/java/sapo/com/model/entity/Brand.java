@@ -9,6 +9,7 @@ import lombok.*;
 import sapo.com.model.dto.response.BrandResponse;
 import sapo.com.model.dto.response.CategoryResponse;
 
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -48,4 +49,5 @@ public class Brand {
         brandResponse.setUpdatedOn(this.updatedOn);
         return brandResponse;
     }
+
 }

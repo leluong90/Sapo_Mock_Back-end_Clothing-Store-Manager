@@ -1,7 +1,17 @@
 package sapo.com.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import sapo.com.model.entity.Role;
 
+import java.util.Optional;
+
 public interface RoleService {
-    Role findByRoleName(String name);
+    Page<Role> findAll(Pageable pageable);
+
+    Optional<Role> findById(Integer id) throws Exception;
+    Role findByName(String name) throws Exception;
+
+
+
 }

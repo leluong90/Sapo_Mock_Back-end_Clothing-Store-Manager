@@ -14,6 +14,7 @@ import java.util.Set;
 
 @Repository
 public interface VariantRepository extends JpaRepository<Variant, Long> {
+
     @Query("SELECT DISTINCT v.size FROM Variant v WHERE v.product.id = :productId AND v.status = true")
     Set<String> findDistinctSizesByProductId(@Param("productId") Long productId);
 
@@ -21,6 +22,7 @@ public interface VariantRepository extends JpaRepository<Variant, Long> {
     Set<String> findDistinctColorsByProductId(@Param("productId") Long productId);
 
     @Query("SELECT DISTINCT v.material FROM Variant v WHERE v.product.id = :productId AND v.status = true")
+
     Set<String> findDistinctMaterialsByProductId(@Param("productId") Long productId);
 
     @Modifying
@@ -44,3 +46,4 @@ public interface VariantRepository extends JpaRepository<Variant, Long> {
 
     Optional<Variant> findByIdAndProductId(Long id, Long productId);
 }
+

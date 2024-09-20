@@ -9,6 +9,7 @@ import sapo.com.model.entity.Brand;
 import sapo.com.model.entity.Category;
 import sapo.com.model.entity.Product;
 
+
 import java.util.Set;
 
 @Repository
@@ -32,3 +33,4 @@ public interface BrandRepository extends JpaRepository<Brand, Long> {
     @Query(value = "SELECT p FROM Product p WHERE p.category.id = :id AND p.status = true")
     Set<Product> existProduct(@Param("id") Long id);
 }
+

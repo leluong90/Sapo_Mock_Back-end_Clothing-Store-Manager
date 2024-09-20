@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -36,6 +37,7 @@ public class Variant {
 //    private Long creatorId;
     private String name;
     @Column(nullable = false)
+
     private String sku;
     private String size;
     private String color;
@@ -54,7 +56,6 @@ public class Variant {
     @JsonFormat(shape = JsonFormat.Shape.STRING , pattern = "dd-MM-yyyy HH:mm")
     @Column(name = "updated_on")
     private LocalDateTime updatedOn ;
-
 
    public VariantResponse transferToResponse(){
         VariantResponse variantResponse= new VariantResponse();
@@ -88,4 +89,5 @@ public class Variant {
         this.priceForSale = variantRequest.getPriceForSale();
         this.imagePath = variantRequest.getImagePath();
     }
+
 }

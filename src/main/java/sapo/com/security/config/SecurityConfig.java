@@ -65,7 +65,7 @@ public class SecurityConfig {
 //                                .requestMatchers( HttpMethod.GET , "/v1/products" , "/v1/categories" )
 //                                .permitAll()
 //                                .requestMatchers(HttpMethod.POST , "/admin/products" , "/admin/categories")
-//                                .authenticated()
+//                                .authenticated("ROLE_ADMIN")
 //                                .requestMatchers(HttpMethod.PUT , "/admin/products" , "/admin/categories/")
 //                                .authenticated()
 //                                .requestMatchers(HttpMethod.DELETE , "/admin/products" , "/admin/categories/")

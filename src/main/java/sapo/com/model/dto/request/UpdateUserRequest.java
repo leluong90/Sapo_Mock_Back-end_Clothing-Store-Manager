@@ -1,21 +1,12 @@
 package sapo.com.model.dto.request;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import sapo.com.model.entity.Orders;
-import sapo.com.model.entity.Role;
-import sapo.com.model.entity.Variants;
 import sapo.com.validator.phone.TenCharacter;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter

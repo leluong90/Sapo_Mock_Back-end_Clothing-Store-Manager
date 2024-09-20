@@ -52,7 +52,7 @@ public class UserController {
                 .data(user)
                 .build());
     }
-    @GetMapping("phoneNumber/{phoneNumber}")
+    @GetMapping("/check-phoneNumber/{phoneNumber}")
     public ResponseEntity<?> findByPhoneNumber(@PathVariable String phoneNumber) throws Exception {
         User user = userService.findByPhoneNumber(phoneNumber);
         return ResponseEntity.ok().body(ResponseObject.builder()
@@ -62,16 +62,26 @@ public class UserController {
                 .build());
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> update(@RequestBody @Valid UpdateUserRequest updateUserRequest , BindingResult bindingResult , @PathVariable Integer id) throws Exception {
-        if (bindingResult.hasErrors()){
-            return ResponseEntity.badRequest().body(bindingResult.getAllErrors().stream().map(ObjectError:: getDefaultMessage ).collect(Collectors.joining("\n")));
-        }
-        User user = userService.update(id , updateUserRequest);
+    @GetMapping("/check-email/{email}")
+    public ResponseEntity<?>findByEmail(@PathVariable String email) throws Exception{
+        User user = userService.findByEmail(email);
         return ResponseEntity.ok().body(ResponseObject.builder()
                         .message("Successfully")
                         .status(HttpStatus.OK)
                         .data(user)
+                .build());
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(@RequestBody @Valid User user , BindingResult bindingResult , @PathVariable Integer id) throws Exception {
+        if (bindingResult.hasErrors()){
+            return ResponseEntity.badRequest().body(bindingResult.getAllErrors().stream().map(ObjectError:: getDefaultMessage ).collect(Collectors.joining("\n")));
+        }
+        User updateUser = userService.update(id , user);
+        return ResponseEntity.ok().body(ResponseObject.builder()
+                        .message("Successfully")
+                        .status(HttpStatus.OK)
+                        .data(updateUser)
                 .build());
     }
 
@@ -85,6 +95,24 @@ public class UserController {
                 .build());
 
     }
+
+//    @GetMapping("/check-email/{email}")
+//    public ResponseEntity<?> existEmail (@PathVariable String email) throws Exception {
+//        userService.existEmail(email);
+//        return ResponseEntity.ok().body(ResponseObject.builder()
+//                        .message("Successfully")
+//                        .status(HttpStatus.OK)
+//                .build());
+//    }
+//
+//    @GetMapping("/check-phoneNumber/{phoneNumber}")
+//    public ResponseEntity<?> existPhoneNumber(@PathVariable String phoneNumber) throws Exception {
+//        userService.existPhoneNumber(phoneNumber);
+//        return ResponseEntity.ok().body(ResponseObject.builder()
+//                        .message("Successfully")
+//                        .status(HttpStatus.OK)
+//                .build());
+//    }
 
 
 }

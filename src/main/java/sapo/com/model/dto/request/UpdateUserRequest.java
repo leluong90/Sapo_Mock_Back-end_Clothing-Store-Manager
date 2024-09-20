@@ -6,7 +6,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import sapo.com.model.entity.Role;
 import sapo.com.validator.phone.TenCharacter;
+
+import java.util.Set;
 
 @Getter
 @Setter

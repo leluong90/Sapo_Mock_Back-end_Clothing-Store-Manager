@@ -88,6 +88,7 @@ public class UserServiceImpl implements UserService {
             UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
             return UserResponse.builder()
                     .token(jwtProvider.generateToken(userPrincipal))
+                    .id(userPrincipal.getId())
                     .email(userPrincipal.getEmail())
                     .name(userPrincipal.getName())
                     .roles(userPrincipal.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet()))
@@ -117,18 +118,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User update(Integer id, UpdateUserRequest updateUserRequest) throws Exception {
+    public User update(Integer id, User user) throws Exception {
 
         Optional<User> findByIdUser = userRepository.findById(id);
         if (findByIdUser.isPresent()){
 
             User updateUser = findByIdUser.get();
-            updateUser.setName(updateUserRequest.getName());
-            updateUser.setEmail(updateUserRequest.getEmail());
-            updateUser.setPassword(passwordEncoder.encode(updateUserRequest.getPassword()));
-            updateUser.setAddress(updateUserRequest.getAddress());
-            updateUser.setPhoneNumber(updateUserRequest.getPhoneNumber());
-            updateUser.setStatus(updateUserRequest.getStatus());
+            updateUser.setName(user.getName());
+            updateUser.setEmail(user.getEmail());
+//            updateUser.setPassword(passwordEncoder.encode(updateUser.getPassword()));
+            updateUser.setPassword(updateUser.getPassword());
+            updateUser.setAddress(user.getAddress());
+            updateUser.setPhoneNumber(user.getPhoneNumber());
+            updateUser.setRoles(user.getRoles());
+            updateUser.setStatus(user.getStatus());
             updateUser.setUpdateOn(LocalDateTime.now());
             return userRepository.save(updateUser);
         }else {
@@ -173,6 +176,39 @@ public class UserServiceImpl implements UserService {
         }else {
             throw new Exception("Phone number not found");
         }
+    }
+
+
+
+    @Override
+    public User findByEmail(String email) throws Exception {
+        User user = userRepository.findByEmail(email);
+        if (user != null){
+            return user ;
+        }else {
+            throw new Exception("Email not found");
+        }
+    }
+
+    @Override
+    public void existPhoneNumber(String phoneNumber) throws Exception {
+        User user = userRepository.findByPhoneNumber(phoneNumber);
+        if (user != null){
+            throw new Exception("Exist phone number");
+        }else {
+            System.out.println("Not exist phone number");
+        }
+    }
+
+    @Override
+    public void existEmail(String email) throws Exception {
+        User user = userRepository.findByEmail(email);
+        if (user != null){
+            throw new Exception("Exist email");
+        }else {
+            System.out.println("Not exist email");
+        }
+
     }
 
     @Override

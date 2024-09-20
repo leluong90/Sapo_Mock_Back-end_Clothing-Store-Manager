@@ -1,6 +1,7 @@
 package sapo.com.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -30,7 +31,7 @@ public class User {
     @NotEmpty(message = "Email cannot be empty \n")
     @Column(unique = true)
     private String email;
-    @NotEmpty(message = "Password cannot be empty\n ")
+//    @NotEmpty(message = "Password cannot be empty\n ")
     private String password ;
     @Size(max = 11)
     @Column(unique = true)
@@ -38,6 +39,7 @@ public class User {
     @TenCharacter
     private String phoneNumber ;
     private String address ;
+
     private Boolean status ;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -54,8 +56,8 @@ public class User {
 //    private List<Variants> variants ;
 
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING , pattern = "dd-MM-yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdOn ;
-    @JsonFormat(shape = JsonFormat.Shape.STRING , pattern = "dd-MM-yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime updateOn ;
 }

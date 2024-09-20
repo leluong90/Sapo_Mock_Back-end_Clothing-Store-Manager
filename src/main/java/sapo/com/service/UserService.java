@@ -18,13 +18,19 @@ public interface UserService {
     User resetPassword (Integer id) throws Exception;
     Page<User> findAll(Pageable pageable);
 
-    User update (Integer id , UpdateUserRequest updateUserRequest) throws Exception;
+    User update (Integer id , User user) throws Exception;
 
     User updateRole (Integer id , Role role) throws Exception;
 
     User findById(Integer id) throws UserException;
 
     User findByPhoneNumber(String phoneNumber) throws Exception;
+
+    User findByEmail(String email) throws Exception;
+
+    void existPhoneNumber (String phoneNumber) throws Exception;
+
+    void existEmail(String email) throws Exception ;
 
     User changPassword (Integer id , PasswordRequest passwordRequest) throws Exception;
 

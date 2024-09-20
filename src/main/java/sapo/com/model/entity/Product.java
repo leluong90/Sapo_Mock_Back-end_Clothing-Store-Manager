@@ -3,11 +3,20 @@ package sapo.com.model.entity;
 import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
+import sapo.com.model.dto.request.ProductRequest;
+import sapo.com.model.dto.request.VariantRequest;
+import sapo.com.model.dto.response.ProductResponse;
+import sapo.com.model.dto.response.VariantResponse;
+
+import java.awt.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
+
 
 @Entity
 @NoArgsConstructor
@@ -46,6 +55,11 @@ public class Product {
     @JsonManagedReference
     private Set<Variant> variants;
 
+//    @PreUpdate
+//    public void preUpdate() {
+//        this.updatedOn = LocalDateTime.now();
+//    }
+
     public void addImagePath(ImagePath imagePath) {
         this.imagePath.add(imagePath);
         imagePath.setProduct(this);  // Set the reference to the product
@@ -65,4 +79,31 @@ public class Product {
         }
         return imagePaths;
     }
+
+    public Set<VariantResponse> getVariantResponse(){
+        Set<VariantResponse> variantResponse= new HashSet<>();
+        for(Variant variant: this.variants){
+            variantResponse.add(variant.transferToResponse());
+        }
+        return variantResponse;
+    }
+
+    public ProductResponse transferToResponse(){
+        ProductResponse productResponse= new ProductResponse();
+        productResponse.setName(this.name);
+        productResponse.setId(this.id);
+        productResponse.setCategoryId(this.category.getId());
+        productResponse.setCategoryName(this.category.getName());
+        productResponse.setBrandId(this.brand.getId());
+        productResponse.setBrandName(this.brand.getName());
+        productResponse.setDescription(this.description);
+        productResponse.setTotalQuantity(this.getTotalQuantity());
+        productResponse.setStatus(this.status);
+        productResponse.setImagePath(this.getImagePaths());
+        productResponse.setCreatedOn(this.createdOn);
+        productResponse.setUpdatedOn(this.updatedOn);
+        productResponse.setVariants(this.getVariantResponse());
+        return productResponse;
+    }
+
 }

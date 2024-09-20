@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sapo.com.model.dto.response.ResponseObject;
-import sapo.com.model.entity.Products;
 import sapo.com.model.entity.Role;
 import sapo.com.service.RoleService;
 

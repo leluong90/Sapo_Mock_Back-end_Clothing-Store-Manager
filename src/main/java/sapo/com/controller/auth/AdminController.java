@@ -2,23 +2,16 @@ package sapo.com.controller.auth;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
-import sapo.com.model.dto.request.RoleRequest;
 import sapo.com.model.dto.response.ResponseObject;
-import sapo.com.model.entity.Brands;
 import sapo.com.model.entity.Role;
 import sapo.com.model.entity.User;
 import sapo.com.service.UserService;
 
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController

@@ -20,6 +20,7 @@ import java.util.Set;
 @Setter
 @Data
 @Builder
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,15 +48,16 @@ public class User {
     )
     private Set<Role> roles ;
 
-    @OneToMany(fetch = FetchType.LAZY , mappedBy = "user" , cascade = CascadeType.ALL)
-    private List<Orders> orders ;
+//    @OneToMany(fetch = FetchType.LAZY , mappedBy = "user" , cascade = CascadeType.ALL)
+//    private List<Orders> orders ;
 
-    @OneToMany(fetch = FetchType.EAGER , mappedBy = "user" , cascade = CascadeType.ALL)
-    private List<Variants> variants ;
+//    @OneToMany(fetch = FetchType.EAGER , mappedBy = "user" , cascade = CascadeType.ALL)
+//    private List<Variants> variants ;
 
 
     @JsonFormat(shape = JsonFormat.Shape.STRING , pattern = "dd-MM-yyyy")
     private LocalDateTime createdOn ;
     @JsonFormat(shape = JsonFormat.Shape.STRING , pattern = "dd-MM-yyyy")
-    private LocalDateTime updateOn ;
+    private LocalDateTime updatedOn ;
+
 }

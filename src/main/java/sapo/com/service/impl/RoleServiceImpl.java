@@ -22,7 +22,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public Optional<Role> findById(Integer id) throws Exception {
+    public Optional<Role> findById(Long id) throws Exception {
         Optional<Role> role = roleRepository.findById(id);
         if (role.isPresent()){
             return role;

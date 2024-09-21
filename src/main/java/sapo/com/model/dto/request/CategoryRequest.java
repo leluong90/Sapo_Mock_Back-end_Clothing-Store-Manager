@@ -12,7 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CategoryRequest {
     @Valid
-    @NotBlank(message = "Category name is required")
+    @NotBlank(message = "Tên loại sản phẩm không được trống.")
     private String name ;
     private String code ;
     private String description  ;

@@ -18,14 +18,14 @@ import java.util.stream.Collectors;
 @Setter
 public class ProductRequest {
     @Valid
-    @NotBlank(message = "Product name is required")
+    @NotBlank(message = "Tên sản phẩm không được trống.")
     private String name;
     private Long categoryId;
     private Long brandId;
     private String description;
     private Set<String> imagePath;
     @Valid
-    @NotEmpty(message = "Set of variant is required")
+    @NotEmpty(message = "Phiên bản không được trống.")
     private Set<VariantRequest> variants;
 
     //Do not have brand, category, variant

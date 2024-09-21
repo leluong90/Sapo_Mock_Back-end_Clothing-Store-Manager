@@ -12,7 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class BrandRequest {
     @Valid
-    @NotBlank(message = "Brand name is required")
+    @NotBlank(message = "Tên nhãn hiệu không được trống.")
     private String name ;
     private String code ;
     private String description  ;

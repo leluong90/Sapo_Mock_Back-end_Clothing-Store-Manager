@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Setter
 public class ProductRequest {
     @Valid
-    @NotBlank(message = "Tên sản phẩm không đươc trống.")
+    @NotBlank(message = "Tên sản phẩm không được trống.")
     private String name;
     private Long categoryId;
     private Long brandId;

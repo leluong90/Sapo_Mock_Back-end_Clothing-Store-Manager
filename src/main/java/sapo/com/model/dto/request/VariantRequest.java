@@ -29,7 +29,7 @@ public class VariantRequest {
     @Min(value = 0,message = "Giá tiền phải là số nguyên dương.")
     private BigDecimal initialPrice;
     @Valid
-    @NotNull(message = "Giá bán không được trống.")
+    @NotNull(message = "Giá bán không được trống")
     @Min(value = 0,message = "Giá tiền phải là số nguyên dương.")
     private BigDecimal priceForSale;
     private String imagePath;

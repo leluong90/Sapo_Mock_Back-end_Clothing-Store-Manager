@@ -129,7 +129,7 @@ public class UserServiceImpl implements UserService {
             updateUser.setAddress(updateUserRequest.getAddress());
             updateUser.setPhoneNumber(updateUserRequest.getPhoneNumber());
             updateUser.setStatus(updateUserRequest.getStatus());
-            updateUser.setUpdateOn(LocalDateTime.now());
+            updateUser.setUpdatedOn(LocalDateTime.now());
             return userRepository.save(updateUser);
         }else {
             throw new Exception("Id not found");

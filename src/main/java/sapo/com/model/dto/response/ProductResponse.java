@@ -29,22 +29,6 @@ public class ProductResponse {
     private LocalDateTime updatedOn ;
     private Set<VariantResponse> variants;
 
-//    public ProductResponse(Product product) {
-//        this.id = product.getId();
-//        this.name = product.getName();
-//        this.categoryId = product.getCategory().getId();
-//        this.categoryName = product.getCategory().getName();
-//        this.brandId = product.getBrand().getId();
-//        this.brandName = product.getBrand().getName();
-//        this.description = product.getDescription();
-//        this.totalQuantity = product.getTotalQuantity();
-//        this.status = product.getStatus();
-//        this.imagePath = product.getImagePaths();
-//        this.createdOn = product.getCreatedOn();
-//        this.updateOn = product.getUpdateOn();
-//        this.variants = product.getVariantRespone();
-//    }
-
     public ProductResponse(){
 
     }

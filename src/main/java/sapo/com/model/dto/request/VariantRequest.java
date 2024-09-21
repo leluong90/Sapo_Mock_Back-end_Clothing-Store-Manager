@@ -18,19 +18,19 @@ public class VariantRequest {
     private Long id;
     private Long productId;
     @Valid
-    @NotBlank(message = "Variant name is required")
+    @NotBlank(message = "Tên phiên bản không được trống.")
     private String name;
     private String sku;
     private String size;
     private String color;
     private String material;
     @Valid
-    @NotNull(message = "Initial price is required")
-    @Min(value = 0,message = "Price must be a positive value")
+    @NotNull(message = "Giá nhập không được trống.")
+    @Min(value = 0,message = "Giá tiền phải là số nguyên dương.")
     private BigDecimal initialPrice;
     @Valid
-    @NotNull(message = "Initial price is required")
-    @Min(value = 0,message = "Price must be a positive value")
+    @NotNull(message = "Giá bán không được trống")
+    @Min(value = 0,message = "Giá tiền phải là số nguyên dương.")
     private BigDecimal priceForSale;
     private String imagePath;
 

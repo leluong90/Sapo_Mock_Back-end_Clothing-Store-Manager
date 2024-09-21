@@ -55,11 +55,6 @@ public class Product {
     @JsonManagedReference
     private Set<Variant> variants;
 
-//    @PreUpdate
-//    public void preUpdate() {
-//        this.updatedOn = LocalDateTime.now();
-//    }
-
     public void addImagePath(ImagePath imagePath) {
         this.imagePath.add(imagePath);
         imagePath.setProduct(this);  // Set the reference to the product

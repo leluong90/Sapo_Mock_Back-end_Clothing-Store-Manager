@@ -33,7 +33,7 @@ public class CategoryServiceImpl implements CategoryService {
     private CategoryRepository categoryRepository;
 
     public Set<CategoryResponse> getListOfCategories(Long page, Long limit, String queryString) {
-        Set<Category> categories = categoryRepository.getListOfCategories(page, limit, queryString);
+        Set<Category> categories = categoryRepository.getListOfCategories(page+1, limit, queryString);
         Set<CategoryResponse> categoriesResponse = new HashSet<>();
         for (Category category : categories) {
             categoriesResponse.add(category.transferToResponse());
@@ -41,6 +41,10 @@ public class CategoryServiceImpl implements CategoryService {
         if(!categoriesResponse.isEmpty())
             return categoriesResponse;
         else throw new ResourceNotFoundException("Loại sản phẩm không tồn tại");
+    }
+
+    public Long getNumberOfCategories(String queryString) {
+        return categoryRepository.countByNameOrCodeAndStatus(queryString);
     }
 
     public CategoryResponse getCategoryById(Long id) {

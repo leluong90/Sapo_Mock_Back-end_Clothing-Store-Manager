@@ -41,9 +41,8 @@ public interface VariantRepository extends JpaRepository<Variant, Long> {
 
     boolean existsBySku(String sku);
 
-    @Query(value = "SELECT v.sku FROM Variant v WHERE v.sku LIKE 'PVN%' ORDER BY v.sku DESC LIMIT 1", nativeQuery = true)
-    String findMaxSku();
-
     Optional<Variant> findByIdAndProductId(Long id, Long productId);
+
+    Long countByNameContainingAndStatus(String name, boolean status);
 }
 

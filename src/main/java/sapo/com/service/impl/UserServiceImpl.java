@@ -100,7 +100,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User resetPassword(Integer id) throws Exception {
+    public User resetPassword(Long id) throws Exception {
         Optional<User> user = userRepository.findById(id) ;
         if (user.isPresent()){
             User updatePasswordUser = user.get();
@@ -117,7 +117,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User update(Integer id, UpdateUserRequest updateUserRequest) throws Exception {
+    public User update(Long id, UpdateUserRequest updateUserRequest) throws Exception {
 
         Optional<User> findByIdUser = userRepository.findById(id);
         if (findByIdUser.isPresent()){
@@ -129,7 +129,7 @@ public class UserServiceImpl implements UserService {
             updateUser.setAddress(updateUserRequest.getAddress());
             updateUser.setPhoneNumber(updateUserRequest.getPhoneNumber());
             updateUser.setStatus(updateUserRequest.getStatus());
-            updateUser.setUpdateOn(LocalDateTime.now());
+            updateUser.setUpdatedOn(LocalDateTime.now());
             return userRepository.save(updateUser);
         }else {
             throw new Exception("Id not found");
@@ -137,7 +137,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateRole(Integer id, Role role) throws Exception {
+    public User updateRole(Long id, Role role) throws Exception {
         Optional<User> userOptional = userRepository.findById(id);
         Role findRole = roleService.findByName(role.getName());
 
@@ -156,7 +156,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public User findById(Integer id) throws UserException {
+    public User findById(Long id) throws UserException {
         Optional<User> user = userRepository.findById(id);
         if(user.isPresent()){
             return user.get();
@@ -176,7 +176,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User changPassword(Integer id , PasswordRequest passwordRequest) throws Exception {
+    public User changPassword(Long id , PasswordRequest passwordRequest) throws Exception {
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent()){
             User updatePasswordUser = user.get();
@@ -192,7 +192,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteById(Integer id) throws Exception {
+    public void deleteById(Long id) throws Exception {
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent()){
             userRepository.deleteById(id);

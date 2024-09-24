@@ -33,7 +33,7 @@ public class BrandServiceImpl implements BrandService {
 
 
     public Set<BrandResponse> getListOfBrands(Long page, Long limit, String queryString) {
-        Set<Brand> brands = brandRepository.getListOfBrands(page, limit, queryString);
+        Set<Brand> brands = brandRepository.getListOfBrands(page+1, limit, queryString);
         Set<BrandResponse> brandsResponse = new HashSet<>();
         for (Brand brand : brands) {
             brandsResponse.add(brand.transferToResponse());
@@ -41,6 +41,10 @@ public class BrandServiceImpl implements BrandService {
         if(!brandsResponse.isEmpty())
             return brandsResponse;
         else throw new ResourceNotFoundException("Nhãn hiệu không tồn tại");
+    }
+
+    public Long getNumberOfBrands(String queryString) {
+        return brandRepository.countByNameOrCodeAndStatus(queryString);
     }
 
     public BrandResponse getBrandById(Long id) {

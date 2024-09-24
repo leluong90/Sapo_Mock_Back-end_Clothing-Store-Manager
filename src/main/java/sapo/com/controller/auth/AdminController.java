@@ -20,7 +20,7 @@ public class AdminController {
     @Autowired
     private UserService userService ;
     @PutMapping("/reset_password/{id}")
-    public ResponseEntity<?> resetPassword(@PathVariable Integer id ) throws Exception {
+    public ResponseEntity<?> resetPassword(@PathVariable Long id ) throws Exception {
         User user = userService.resetPassword(id);
         return ResponseEntity.ok().body(ResponseObject.builder()
                         .message("Successfully")
@@ -29,7 +29,7 @@ public class AdminController {
                 .build()) ;
     }
     @PutMapping("/role/{id}")
-    public ResponseEntity<?> updateRole(@PathVariable Integer id , @RequestBody @Valid Role role , BindingResult bindingResult) throws Exception {
+    public ResponseEntity<?> updateRole(@PathVariable Long id , @RequestBody @Valid Role role , BindingResult bindingResult) throws Exception {
         if (bindingResult.hasErrors()){
             return ResponseEntity.badRequest().body(bindingResult.getAllErrors().stream().map(ObjectError :: getDefaultMessage ).collect(Collectors.joining("\n")));
         }
@@ -42,7 +42,7 @@ public class AdminController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteById(@PathVariable Integer id) throws Exception {
+    public ResponseEntity<?> deleteById(@PathVariable Long id) throws Exception {
         userService.deleteById(id);
         return ResponseEntity.ok().body(ResponseObject.builder()
                         .message("Successfully")

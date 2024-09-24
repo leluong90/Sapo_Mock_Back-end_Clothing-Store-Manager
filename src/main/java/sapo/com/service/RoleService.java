@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface RoleService {
     Page<Role> findAll(Pageable pageable);
 
-    Optional<Role> findById(Integer id) throws Exception;
+    Optional<Role> findById(Long id) throws Exception;
     Role findByName(String name) throws Exception;
 
 

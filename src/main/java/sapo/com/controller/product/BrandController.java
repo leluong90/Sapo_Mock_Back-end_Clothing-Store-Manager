@@ -20,6 +20,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/v1/products/brands")
+@CrossOrigin("http://localhost:5173")
 public class BrandController {
 
     private static final Logger log = LoggerFactory.getLogger(BrandController.class);
@@ -39,6 +40,12 @@ public class BrandController {
             log.error("Error: ", e);
             return new ResponseEntity<>(new ResponseObject(e.getMessage(), null), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @GetMapping("/total-brands")
+    public ResponseEntity<?> getNumberOfBrands(@RequestParam String query) {
+        Long numberOfBrands = brandService.getNumberOfBrands(query);
+        return new ResponseEntity<>(new ResponseObject("Lấy số lượng nhãn hiệu thành công", numberOfBrands), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

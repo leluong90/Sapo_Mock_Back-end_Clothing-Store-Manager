@@ -23,7 +23,7 @@ public class FileController {
         try {
             String fileUrl = firebaseFileService.uploadFile(file);
             return ResponseEntity.ok(fileUrl);
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             return ResponseEntity.status(500).body("Failed to upload file: " + e.getMessage());
         }
     }

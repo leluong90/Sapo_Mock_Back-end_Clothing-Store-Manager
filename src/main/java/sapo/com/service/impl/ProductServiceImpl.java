@@ -50,14 +50,18 @@ public class ProductServiceImpl implements ProductService {
     private ImagePathRepository imagePathRepository;
 
     public Set<ProductResponse> getListOfProducts(Long page, Long limit, String queryString) {
-        Set<Product> products = productRepository.getListOfProducts(page, limit, queryString);
+        Set<Product> products = productRepository.getListOfProducts(page + 1, limit, queryString);
         Set<ProductResponse> productsResponse = new HashSet<>();
         for (Product product : products) {
             productsResponse.add(product.transferToResponse());
         }
-        if(!productsResponse.isEmpty())
+        if (!productsResponse.isEmpty())
             return productsResponse;
         else throw new ResourceNotFoundException("Sản phẩm không tồn tại");
+    }
+
+    public Long getNumberOfProducts(String queryString) {
+        return productRepository.countByNameContainingAndStatus(queryString,true);
     }
 
     public Set<VariantResponse> getListOfVariants(Long page, Long limit, String queryString) {
@@ -66,9 +70,13 @@ public class ProductServiceImpl implements ProductService {
         for (Variant variant : variants) {
             variantsResponse.add(variant.transferToResponse());
         }
-        if(!variantsResponse.isEmpty())
+        if (!variantsResponse.isEmpty())
             return variantsResponse;
         else throw new ResourceNotFoundException("Phiên bản không tồn tại");
+    }
+
+    public Long getNumberOfVariants(String queryString) {
+        return variantRepository.countByNameContainingAndStatus(queryString,true);
     }
 
     public ProductResponse getProductById(Long id) {
@@ -243,9 +251,9 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new ResourceNotFoundException("Sản phẩm không tồn tại hoặc đã bị xóa"));
         Variant variant = variantRepository.findById(variantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Phiên bản không tồn tại hoặc đã bị xóa"));
-        if(product.getVariants().size()==1){
+        if (product.getVariants().size() == 1) {
             deleteProductById(productId);
-        }else{
+        } else {
             variantRepository.deleteVariantById(variantId);
         }
         return true;

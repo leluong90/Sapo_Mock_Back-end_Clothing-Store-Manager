@@ -19,6 +19,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/v1/products/categories")
+@CrossOrigin("http://localhost:5173")
 public class CategoryController {
 
     private static final Logger log = LoggerFactory.getLogger(CategoryController.class);
@@ -28,10 +29,14 @@ public class CategoryController {
 
     @GetMapping
     public ResponseEntity<ResponseObject> getListOfCategories(@RequestParam Long page, @RequestParam Long limit, @RequestParam String query) {
-
         Set<CategoryResponse> categories = categoryService.getListOfCategories(page, limit, query);
         return new ResponseEntity<>(new ResponseObject("Lấy danh sách loại sản phẩm thành công", categories), HttpStatus.OK);
+    }
 
+    @GetMapping("/total-categories")
+    public ResponseEntity<?> getNumberOfCategories(@RequestParam String query) {
+        Long numberOfCategories = categoryService.getNumberOfCategories(query);
+        return new ResponseEntity<>(new ResponseObject("Lấy số lượng loại sản phẩm thành công", numberOfCategories), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

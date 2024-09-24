@@ -22,9 +22,5 @@ public class ImagePath {
     @JsonBackReference
     private Product product ;
     private String path  ;
-    @Override
-    public String toString() {
-        return "League [id=" + id + ", name=" + path + "]";
-    }
 
 }

@@ -8,6 +8,9 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import org.springframework.transaction.annotation.Transactional;
+
 import sapo.com.model.entity.Product;
 
 import java.util.Set;
@@ -26,3 +29,4 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Set<Product> getListOfProducts(Long page, Long limit, String query );
 
 }
+

@@ -32,10 +32,10 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     boolean existsByCode(String code);
 
-    @Query(value = "SELECT c.code FROM Category c WHERE c.code LIKE 'PGN%' ORDER BY c.code DESC LIMIT 1", nativeQuery = true)
-    String findMaxCode();
-
     @Query(value = "SELECT p FROM Product p WHERE p.category.id = :id AND p.status = true")
     Set<Product> existProduct(@Param("id") Long id);
+
+    @Query(value = "SELECT COUNT(*) FROM Category c WHERE (c.name LIKE %:query% OR c.code LIKE %:query%) AND c.status = true")
+    Long countByNameOrCodeAndStatus(@Param("query") String query);
 }
 

@@ -27,10 +27,10 @@ public interface BrandRepository extends JpaRepository<Brand, Long> {
 
     boolean existsByCode(String code);
 
-    @Query(value = "SELECT d.code FROM Brand d WHERE d.code LIKE 'PBN%' ORDER BY d.code DESC LIMIT 1", nativeQuery = true)
-    String findMaxCode();
-
     @Query(value = "SELECT p FROM Product p WHERE p.category.id = :id AND p.status = true")
     Set<Product> existProduct(@Param("id") Long id);
+
+    @Query(value = "SELECT COUNT(*) FROM Brand b WHERE (b.name LIKE %:query% OR b.code LIKE %:query%) AND b.status = true")
+    Long countByNameOrCodeAndStatus(@Param("query") String query);
 }
 

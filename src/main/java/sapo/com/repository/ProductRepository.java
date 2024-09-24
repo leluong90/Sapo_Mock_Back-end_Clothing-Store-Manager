@@ -28,5 +28,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     )
     Set<Product> getListOfProducts(Long page, Long limit, String query );
 
+    Long countByNameContainingAndStatus(String name, boolean status);
 }
 

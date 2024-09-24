@@ -44,7 +44,7 @@ public class UserController {
                 .build());
     }
     @GetMapping("/{id}")
-    public ResponseEntity<?> findById(@PathVariable Integer id) throws UserException {
+    public ResponseEntity<?> findById(@PathVariable Long id) throws UserException {
         User user = userService.findById(id);
         return ResponseEntity.ok().body(ResponseObject.builder()
                 .message("Successfully")
@@ -63,7 +63,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@RequestBody @Valid UpdateUserRequest updateUserRequest , BindingResult bindingResult , @PathVariable Integer id) throws Exception {
+    public ResponseEntity<?> update(@RequestBody @Valid UpdateUserRequest updateUserRequest , BindingResult bindingResult , @PathVariable Long id) throws Exception {
         if (bindingResult.hasErrors()){
             return ResponseEntity.badRequest().body(bindingResult.getAllErrors().stream().map(ObjectError:: getDefaultMessage ).collect(Collectors.joining("\n")));
         }
@@ -76,7 +76,7 @@ public class UserController {
     }
 
     @PutMapping("/change_password/{id}")
-    public ResponseEntity<?> changePassword (@PathVariable Integer id , @RequestBody PasswordRequest passwordRequest) throws Exception {
+    public ResponseEntity<?> changePassword (@PathVariable Long id , @RequestBody PasswordRequest passwordRequest) throws Exception {
         User user = userService.changPassword(id , passwordRequest);
         return ResponseEntity.ok().body(ResponseObject.builder()
                         .message("Successfully")

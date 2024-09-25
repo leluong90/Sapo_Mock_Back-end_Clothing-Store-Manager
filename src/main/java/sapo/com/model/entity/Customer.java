@@ -25,8 +25,8 @@ public class Customer {
     private String code;
     @Column(nullable = false)
     private String name;
-    @Column(nullable = false)
-    private String phone;
+    @Column(name="phone_number",nullable = false)
+    private String phoneNumber;
     private String email;
     private boolean gender;
     private String note;
@@ -69,11 +69,11 @@ public class Customer {
     }
 
     public String getPhone() {
-        return phone;
+        return phoneNumber;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setPhone(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public String getEmail() {

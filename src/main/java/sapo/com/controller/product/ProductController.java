@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +21,7 @@ import sapo.com.service.impl.ProductServiceImpl;
 import java.util.Set;
 
 @RestController
+@CrossOrigin("http://localhost:5173")
 @RequestMapping("/v1/products")
 public class ProductController {
 
@@ -33,10 +36,22 @@ public class ProductController {
         return new ResponseEntity<>(new ResponseObject("Lấy danh sách sản phẩm thành công", productResponse), HttpStatus.OK);
     }
 
+    @GetMapping("/total-products")
+    public ResponseEntity<?> getNumberOfProducts(@RequestParam String query) {
+        Long numberOfProducts = productService.getNumberOfProducts(query);
+        return new ResponseEntity<>(new ResponseObject("Lấy số lượng sản phẩm thành công", numberOfProducts), HttpStatus.OK);
+    }
+
     @GetMapping("/variants/{id}")
     public ResponseEntity<?> getListOfVariants(@RequestParam Long page, @RequestParam Long limit, @RequestParam String query) {
         Set<VariantResponse> variantResponse = productService.getListOfVariants(page, limit, query);
         return new ResponseEntity<>(new ResponseObject("Lấy danh sách phiên bản thành công", variantResponse), HttpStatus.OK);
+    }
+
+    @GetMapping("/total-variants")
+    public ResponseEntity<?> getNumberOfVariants(@RequestParam String query) {
+        Long numberOfVariants = productService.getNumberOfVariants(query);
+        return new ResponseEntity<>(new ResponseObject("Lấy số lượng phiên bản thành công", numberOfVariants), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

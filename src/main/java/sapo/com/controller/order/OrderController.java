@@ -1,10 +1,17 @@
 package sapo.com.controller.order;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sapo.com.exception.OrderNotFoundException;
 import sapo.com.model.dto.request.order.CreateOrderRequest;
 import sapo.com.model.dto.response.ResponseObject;
+import sapo.com.model.dto.response.order.OrderRevenueDto;
+import sapo.com.model.entity.Order;
 import sapo.com.service.OrderService;
 
 import java.text.DateFormat;
@@ -51,5 +58,13 @@ public class OrderController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @GetMapping("/today")
+    public ResponseEntity<OrderRevenueDto> getTodayOrders(@RequestParam(value = "pageNum", required = false, defaultValue = "0") int pageNum,
+                                                          @RequestParam(value = "pageSize", defaultValue = "5") int pageSize) throws OrderNotFoundException {
+        Pageable pageable = PageRequest.of(pageNum, pageSize);
+        OrderRevenueDto orderRevenue = orderService.getTodayOrdersAndRevenue(pageable);
+        return new ResponseEntity<>(orderRevenue, HttpStatus.OK);
     }
 }

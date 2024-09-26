@@ -84,6 +84,16 @@ public class CustomerController {
     @PutMapping("/customers/update/{id}")
     public ResponseEntity<?> updateCustomer(@PathVariable("id") Long id,
                                             @RequestBody Customer customerInForm) throws CustomerNotFoundException {
+        Customer existingCustomer = customerService.findByPhoneNumber(customerInForm.getPhone());
+        if (existingCustomer != null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                    ResponseObject.builder()
+                            .message("Phone number already exists.")
+                            .status(HttpStatus.CONFLICT)
+                            .data(null)
+                            .build()
+            );
+        }
         Customer customerInDb = customerService.findById(id);
         customerInForm.setId(id);
         Customer updatedCustomer = customerService.update(customerInForm);

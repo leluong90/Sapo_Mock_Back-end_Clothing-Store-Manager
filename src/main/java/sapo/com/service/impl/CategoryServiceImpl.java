@@ -82,7 +82,7 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Loại sản phẩm không tồn tại hoặc đã bị xóa"));
         String code = categoryRequest.getCode();
-        if(code.equals(category.getCode()) && code != ""){
+        if(!code.equals(category.getCode()) && code != ""){
             if (code.startsWith("PGN")) {
                 throw new DataConflictException("Mã loại không được có tiền tố " + "PGN");
             }

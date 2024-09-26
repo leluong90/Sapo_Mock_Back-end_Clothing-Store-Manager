@@ -68,9 +68,9 @@ public class CategoryController {
 
         Boolean checkk = categoryService.deleteCategoryById(id);
         if (checkk)
-            return new ResponseEntity<>("Xóa loại sản phẩm thành công", HttpStatus.OK);
+            return new ResponseEntity<>(new ResponseObject("Xóa loại sản phẩm thành công",null), HttpStatus.OK);
         else
-            return new ResponseEntity<>("Có lỗi khi xóa loại sản phẩm", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ResponseObject("Không thể xóa loại sản phẩm này.",null), HttpStatus.BAD_REQUEST);
 
     }
 

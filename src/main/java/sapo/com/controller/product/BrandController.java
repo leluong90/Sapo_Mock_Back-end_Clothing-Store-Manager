@@ -76,9 +76,9 @@ public class BrandController {
 
         Boolean checkk = brandService.deleteBrandById(id);
         if (checkk)
-            return new ResponseEntity<>("Xóa nhãn hiệu thành công", HttpStatus.OK);
+            return new ResponseEntity<>(new ResponseObject("Xóa nhãn hiệu thành công",null), HttpStatus.OK);
         else
-            return new ResponseEntity<>("Có lỗi khi xóa nhãn hiệu", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ResponseObject("Không thể xóa nhãn hiệu này",null), HttpStatus.BAD_REQUEST);
 
     }
 

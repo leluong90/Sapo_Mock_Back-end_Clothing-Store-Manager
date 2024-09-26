@@ -19,9 +19,9 @@ public class FileController {
     private FirebaseFileServiceImpl firebaseFileService;
 
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file,@RequestParam("directory") String directory) {
         try {
-            String fileUrl = firebaseFileService.uploadFile(file);
+            String fileUrl = firebaseFileService.uploadFileAndGetUrl(file,directory);
             return ResponseEntity.ok(fileUrl);
         } catch (IOException | InterruptedException e) {
             return ResponseEntity.status(500).body("Failed to upload file: " + e.getMessage());

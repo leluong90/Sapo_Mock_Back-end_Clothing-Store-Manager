@@ -49,6 +49,9 @@ public class OrderServiceImpl implements OrderService {
         if (createOrderRequest.getOrderLineItems().isEmpty()) {
             throw new RuntimeException("Đơn hàng không có sản phẩm");
         }
+        if (createOrderRequest.getCashReceive().compareTo(createOrderRequest.getTotalPayment()) < 0) {
+            throw new RuntimeException("Số tiền nhận không hợp lệ");
+        }
 
         // Tạo đơn hàng
         Order order = new Order();
@@ -90,6 +93,12 @@ public class OrderServiceImpl implements OrderService {
             orderRepository.save(newOrder);
         });
 
+        // Cập nhật thông tin khách hàng
+        customer.setNumberOfOrder(customer.getNumberOfOrder() + 1);
+        if(customer.getTotalExpense() == null) {
+            customer.setTotalExpense(newOrder.getTotalPayment());
+        } else customer.setTotalExpense(customer.getTotalExpense().add(newOrder.getTotalPayment()));
+
         return "Tạo đơn hàng thành công";
     }
 
@@ -99,7 +108,12 @@ public class OrderServiceImpl implements OrderService {
         // Chuyển đổi danh sách đơn hàng sang danh sách response
         List<AllOrderResponse> allOrderResponseList = orders.stream().map(AllOrderResponse::new).toList();
         // Phân trang
-        return allOrderResponseList.subList(Math.max((page - 1) * limit, 0), Math.min(page * limit, allOrderResponseList.size()));
+        return allOrderResponseList.subList(Math.max(page * limit, 0), Math.min((page + 1) * limit, allOrderResponseList.size()));
+    }
+
+    @Override
+    public int getNumberOfOrders(String query, LocalDate startDate, LocalDate endDate) {
+        return orderRepository.findOrdersByDateAndCode(startDate, endDate, query).size();
     }
 
     @Override

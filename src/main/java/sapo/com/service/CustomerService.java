@@ -27,10 +27,10 @@ public class CustomerService {
         }
 
 
-        // Kiểm tra nếu không tìm thấy khách hàng nào
-        if (customersByKeyword.isEmpty()) {
-            throw new CustomerNotFoundException("Không tìm thấy khách hàng nào.");
-        }
+//        // Kiểm tra nếu không tìm thấy khách hàng nào
+//        if (customersByKeyword.isEmpty()) {
+//            throw new CustomerNotFoundException("Không tìm thấy khách hàng nào.");
+//        }
         return customersByKeyword;
 
 

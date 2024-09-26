@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import sapo.com.exception.CustomerNotFoundException;
+import sapo.com.model.dto.response.ResponseObject;
 import sapo.com.model.entity.Customer;
 import sapo.com.service.CustomerService;
 
@@ -27,15 +28,14 @@ public class CustomerController {
         Page<Customer> customers = customerService.findByKeyword(keyword, pageable);
         return new ResponseEntity<>(customers, HttpStatus.OK); // Trả về trạng thái 200 OK nếu thành công
     }
-
-//    @GetMapping("/customers")
-//    public ResponseEntity<?> findByPhoneNumber(@RequestParam String phoneNumber) {
-//        Customer existingCustomer = customerService.findByPhoneNumber(phoneNumber);
-//        if (existingCustomer == null) {
-//            return new ResponseEntity<>("Không tìm thấy khách hàng ứng với SĐT: " + phoneNumber, HttpStatus.NOT_FOUND);
-//        }
-//        return new ResponseEntity<>(existingCustomer, HttpStatus.OK);
-//    }
+    @GetMapping("/customers/{customerId}")
+    public ResponseEntity<?> findById(@PathVariable Long customerId) throws CustomerNotFoundException {
+        Customer existingCustomer = customerService.findById(customerId);
+        if (existingCustomer == null) {
+            return new ResponseEntity<>("Không tìm thấy khách hàng ứng với ID: " + customerId, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(existingCustomer, HttpStatus.OK);
+    }
 
     @GetMapping("/customers/{id}")
     public ResponseEntity<?> findById(@PathVariable("id") Long id) {
@@ -48,35 +48,60 @@ public class CustomerController {
     }
 
     @PostMapping("/customers/create")
-    public ResponseEntity<?> createCustomer(@Validated @RequestBody Customer customer) {
+    public ResponseEntity<ResponseObject> createCustomer(@Validated @RequestBody Customer customer) {
         try {
             // Check if the phone number already exists
             Customer existingCustomer = customerService.findByPhoneNumber(customer.getPhone());
             if (existingCustomer != null) {
-                return new ResponseEntity<>("Phone number already exists.", HttpStatus.CONFLICT);
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                        ResponseObject.builder()
+                                .message("Phone number already exists.")
+                                .status(HttpStatus.CONFLICT)
+                                .data(null)
+                                .build()
+                );
             }
 
             // Save the new customer
             customerService.register(customer);
-            return new ResponseEntity<>("Create new customer successfully", HttpStatus.CREATED);
+            return ResponseEntity.status(HttpStatus.CREATED).body(
+                    ResponseObject.builder()
+                            .message("Create new customer successfully")
+                            .status(HttpStatus.CREATED)
+                            .data(null)
+                            .build()
+            );
         } catch (Exception e) {
-            return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                    ResponseObject.builder()
+                            .message("Unauthorized")
+                            .status(HttpStatus.UNAUTHORIZED)
+                            .data(null)
+                            .build()
+            );
         }
     }
     @PutMapping("/customers/update/{id}")
     public ResponseEntity<?> updateCustomer(@PathVariable("id") Long id,
-                     @RequestBody Customer customerInForm) throws CustomerNotFoundException {
+                                            @RequestBody Customer customerInForm) throws CustomerNotFoundException {
         Customer customerInDb = customerService.findById(id);
         customerInForm.setId(id);
-        customerService.update(customerInForm);
-        return new ResponseEntity<>("Customer ID:"+id+" updated successfully", HttpStatus.OK);
+        Customer updatedCustomer = customerService.update(customerInForm);
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+                ResponseObject.builder()
+                        .message("Customer ID:"+id+" updated successfully")
+                        .status(HttpStatus.OK)
+                        .data(updatedCustomer)
+                        .build()
+        );
     }
 
     @DeleteMapping("/customers/delete/{id}")
     public ResponseEntity<?> deleteCustomer(@PathVariable("id") Long customerId) throws CustomerNotFoundException {
 
-            customerService.delete(customerId);
-            return new ResponseEntity<>("Customer with ID " + customerId + " has been successfully deleted.",HttpStatus.OK);
+        customerService.delete(customerId);
+        return new ResponseEntity<>("Customer with ID " + customerId + " has been successfully deleted.",HttpStatus.OK);
 
 
     }

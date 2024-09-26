@@ -60,12 +60,12 @@ public class CustomerService {
         customerRepository.save(customer);
 
     }
-    public void update(Customer customerInForm) throws CustomerNotFoundException {
+    public Customer update(Customer customerInForm) throws CustomerNotFoundException {
         Optional<Customer> customerInDB = customerRepository.findById(customerInForm.getId());
         if(customerInDB.isPresent()){
             customerInForm.setCreatedOn(customerInDB.get().getCreatedOn());
             customerInForm.setUpdatedOn(LocalDateTime.now());
-            customerRepository.save(customerInForm);
+            return customerRepository.save(customerInForm);
         }else{
             throw new CustomerNotFoundException("Customer not found with ID: " + customerInForm.getId());
         }

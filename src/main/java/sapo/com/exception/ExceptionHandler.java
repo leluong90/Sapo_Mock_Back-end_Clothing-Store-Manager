@@ -7,6 +7,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import sapo.com.model.dto.response.ResponseObject;
+import sapo.com.model.entity.Order;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -51,6 +52,14 @@ public class ExceptionHandler extends RuntimeException {
     // Xử lý ngoại lệ CustomerNotFoundException
     @org.springframework.web.bind.annotation.ExceptionHandler(CustomerNotFoundException.class)
     public ResponseEntity<?> handleCustomerNotFoundException(CustomerNotFoundException ex) {
+        // Tạo thông báo lỗi
+        String errorMessage = ex.getMessage();
+
+        // Trả về thông báo lỗi và mã trạng thái 404 NOT FOUND
+        return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
+    }
+    @org.springframework.web.bind.annotation.ExceptionHandler(OrderNotFoundException.class)
+    public ResponseEntity<?> handleCustomerNotFoundException(OrderNotFoundException ex) {
         // Tạo thông báo lỗi
         String errorMessage = ex.getMessage();
 

@@ -1,16 +1,21 @@
 package sapo.com.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sapo.com.exception.OrderNotFoundException;
 import sapo.com.model.dto.request.order.CreateOrderRequest;
 import sapo.com.model.dto.request.order.CreateOrderDetailRequest;
 import sapo.com.model.dto.response.order.AllOrderResponse;
 import sapo.com.model.dto.response.order.OrderDetailResponse;
+import sapo.com.model.dto.response.order.OrderRevenueDto;
 import sapo.com.model.entity.*;
 import sapo.com.repository.*;
 import sapo.com.service.OrderService;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
@@ -119,5 +124,24 @@ public class OrderServiceImpl implements OrderService {
         // Lấy chi tiết đơn hàng
         orderDetailResponse.setOrderDetails(orderDetailRepository.findAllByOrderId(orderId));
         return orderDetailResponse;
+    }
+
+    @Override
+    public OrderRevenueDto getTodayOrdersAndRevenue(Pageable pageable) throws OrderNotFoundException {
+        LocalDate today = LocalDate.now();
+
+        // Lấy danh sách đơn hàng
+        Page<Order> ordersToday = orderRepository.findOrdersToday(today, pageable);
+
+        if (ordersToday.isEmpty()) {
+            throw new OrderNotFoundException("Không tìm thấy đơn hàng nào cho ngày hôm nay.");
+        }
+
+        // Tính tổng doanh thu
+        BigDecimal totalRevenue = ordersToday.getContent().stream()
+                .map(Order::getTotalPayment)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        return new OrderRevenueDto(ordersToday, totalRevenue);
     }
 }

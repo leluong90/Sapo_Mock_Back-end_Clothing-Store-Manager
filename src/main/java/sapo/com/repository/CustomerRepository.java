@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface CustomerRepository extends JpaRepository<Customer , Long>, PagingAndSortingRepository<Customer, Long>, CrudRepository<Customer, Long> {
     public List<Customer> findAll();
-    @Query("SELECT c FROM Customer c WHERE c.name LIKE '%?1%' OR c.phoneNumber LIKE '%?1%'")
+    @Query(value = "SELECT * FROM customer c WHERE c.name LIKE %?1% OR c.phone_number LIKE %?1%", nativeQuery = true)
     public Page<Customer> findByKeyword(String keyword, Pageable pageable);
 
     public Customer findByPhoneNumber(String phoneNumber);

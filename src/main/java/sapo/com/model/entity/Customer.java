@@ -39,7 +39,7 @@ public class Customer {
     @Column(name = "updated_on")
     @UpdateTimestamp
     private LocalDateTime updatedOn;
-    @Column(name = "total_expense")
+    @Column(name = "total_expense", columnDefinition = "Decimal(10,2) default '0.00'")
     private BigDecimal totalExpense;
     @Column(name = "number_of_order")
     private int numberOfOrder;

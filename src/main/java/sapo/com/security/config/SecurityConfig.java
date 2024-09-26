@@ -60,7 +60,7 @@ public class SecurityConfig {
                         (auth)->auth
                                 .requestMatchers("/v1/auth/**")
                                 .permitAll()
-                                .requestMatchers("/v1/admin/**","/v1/user/**","/v1/role/**" ,"/v1/products/**" , "/v1/categories/**" , "/v1/brands/**" , "/v1/image_paths/**" )
+                                .requestMatchers("/v1/admin/**","/v1/user/**","/v1/role/**" ,"/v1/products/**" , "/v1/categories/**" , "/v1/brands/**" , "/v1/image_paths/**", "v1/orders/**", "/customers/**" )
                                 .permitAll()
 //                                .requestMatchers( HttpMethod.GET , "/v1/products" , "/v1/categories" )
 //                                .permitAll()

@@ -12,4 +12,5 @@ public interface OrderService {
     String createOrder(CreateOrderRequest createOrderRequest);
     List<AllOrderResponse> getAllOrder(int page, int limit, String query, LocalDate startDate, LocalDate endDate);
     OrderDetailResponse getOrderDetail(Long orderId);
+    int getNumberOfOrders(String query, LocalDate startDate, LocalDate endDate);
 }

@@ -37,6 +37,16 @@ public class CustomerController {
 //        return new ResponseEntity<>(existingCustomer, HttpStatus.OK);
 //    }
 
+    @GetMapping("/customers/{id}")
+    public ResponseEntity<?> findById(@PathVariable("id") Long id) {
+        try {
+            Customer customer = customerService.findById(id);
+            return new ResponseEntity<>(customer, HttpStatus.OK);
+        } catch (CustomerNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
     @PostMapping("/customers/create")
     public ResponseEntity<?> createCustomer(@Validated @RequestBody Customer customer) {
         try {

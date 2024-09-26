@@ -12,7 +12,7 @@ import java.util.List;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
-    @Query(value = "SELECT * FROM orders o WHERE o.created_on BETWEEN :startDate AND :endDate AND o.code LIKE %:code%", nativeQuery = true)
+    @Query(value = "SELECT * FROM orders o WHERE o.created_on BETWEEN :startDate AND :endDate AND o.code LIKE %:code% ORDER BY o.created_on DESC", nativeQuery = true)
     List<Order> findOrdersByDateAndCode(@Param("startDate") LocalDate startDate,
                                         @Param("endDate") LocalDate endDate,
                                         @Param("code") String code);

@@ -15,7 +15,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 @RestController
-@RequestMapping("/v1/order")
+@RequestMapping("/v1/orders")
 public class OrderController {
 
     @Autowired
@@ -30,6 +30,20 @@ public class OrderController {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         try {
             return ResponseEntity.ok(ResponseObject.builder().data(orderService.getAllOrder(page, limit, query, LocalDate.parse(startDate, formatter), LocalDate.parse(endDate, formatter).plusDays(1))).build());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ResponseObject.builder().message(e.getMessage()).status(null).build());
+        }
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<ResponseObject> getNumberOfOrders(@RequestParam(value = "page", defaultValue = "0") int page,
+                                                      @RequestParam(value = "limit", defaultValue = "10") int limit,
+                                                      @RequestParam(value = "query", defaultValue = "") String query,
+                                                      @RequestParam(value = "startDate") String startDate,
+                                                      @RequestParam(value = "endDate") String endDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        try {
+            return ResponseEntity.ok(ResponseObject.builder().data(orderService.getNumberOfOrders(query, LocalDate.parse(startDate, formatter), LocalDate.parse(endDate, formatter).plusDays(1))).build());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(ResponseObject.builder().message(e.getMessage()).status(null).build());
         }

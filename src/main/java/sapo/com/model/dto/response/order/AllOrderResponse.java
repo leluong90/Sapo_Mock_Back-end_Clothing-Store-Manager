@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Data
 public class AllOrderResponse {
+    private Long id;
     private String code;
     private String customerName;
     private LocalDateTime createdOn;
@@ -19,6 +20,7 @@ public class AllOrderResponse {
     private BigDecimal totalPayment;
 
     public AllOrderResponse(Order order) {
+        this.id = order.getId();
         this.code = order.getCode();
         this.customerName = order.getCustomer().getName();
         this.createdOn = order.getCreatedOn();

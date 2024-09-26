@@ -21,10 +21,11 @@ import java.util.Set;
 @Setter
 @Data
 @Builder
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id ;
+    private Long id ;
     @NotEmpty(message = "Name cannot be empty \n ")
     private String name;
     @Email(message = "Email is not valid", regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
@@ -39,7 +40,6 @@ public class User {
     @TenCharacter
     private String phoneNumber ;
     private String address ;
-
     private Boolean status ;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

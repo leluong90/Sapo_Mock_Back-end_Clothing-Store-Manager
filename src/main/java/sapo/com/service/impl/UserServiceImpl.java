@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -83,6 +85,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse login(UserRequest userRequest) throws Exception {
         try {
+
             Authentication authentication ;
             authentication = authenticationProvider.authenticate(new UsernamePasswordAuthenticationToken(userRequest.getEmail(),userRequest.getPassword()));
             UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
@@ -94,14 +97,21 @@ public class UserServiceImpl implements UserService {
                     .roles(userPrincipal.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet()))
                     .build();
 
+        } catch (BadCredentialsException e) {
+            // Handle incorrect email or password scenario
+            throw new Exception("Incorrect email or password. Please try again.");
+        } catch (DisabledException e) {
+            // Handle account disabled scenario
+            throw new Exception("Your account has been disabled. Please contact support.");
         }catch (AuthenticationException authenticationException){
             System.err.println(authenticationException);
-            throw new Exception("Email or password incorrect");
+            throw new Exception("Authentication failed. Please check your credentials.");
+
         }
     }
 
     @Override
-    public User resetPassword(Integer id) throws Exception {
+    public User resetPassword(Long id) throws Exception {
         Optional<User> user = userRepository.findById(id) ;
         if (user.isPresent()){
             User updatePasswordUser = user.get();
@@ -118,7 +128,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User update(Integer id, User user) throws Exception {
+    public User update(Long id, User user) throws Exception {
 
         Optional<User> findByIdUser = userRepository.findById(id);
         if (findByIdUser.isPresent()){
@@ -140,7 +150,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateRole(Integer id, Role role) throws Exception {
+    public User updateRole(Long id, Role role) throws Exception {
         Optional<User> userOptional = userRepository.findById(id);
         Role findRole = roleService.findByName(role.getName());
 
@@ -159,7 +169,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public User findById(Integer id) throws UserException {
+    public User findById(Long id) throws UserException {
         Optional<User> user = userRepository.findById(id);
         if(user.isPresent()){
             return user.get();
@@ -212,7 +222,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User changPassword(Integer id , PasswordRequest passwordRequest) throws Exception {
+    public User changPassword(Long id , PasswordRequest passwordRequest) throws Exception {
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent()){
             User updatePasswordUser = user.get();
@@ -228,7 +238,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteById(Integer id) throws Exception {
+    public void deleteById(Long id) throws Exception {
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent()){
             userRepository.deleteById(id);

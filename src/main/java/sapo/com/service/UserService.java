@@ -15,14 +15,14 @@ public interface UserService {
     User register(User user) throws Exception;
     UserResponse login (UserRequest userRequest) throws Exception;
 
-    User resetPassword (Integer id) throws Exception;
+    User resetPassword (Long id) throws Exception;
     Page<User> findAll(Pageable pageable);
 
-    User update (Integer id , User user) throws Exception;
+    User update (Long id , User user) throws Exception;
 
-    User updateRole (Integer id , Role role) throws Exception;
+    User updateRole (Long id , Role role) throws Exception;
 
-    User findById(Integer id) throws UserException;
+    User findById(Long id) throws UserException;
 
     User findByPhoneNumber(String phoneNumber) throws Exception;
 
@@ -32,9 +32,9 @@ public interface UserService {
 
     void existEmail(String email) throws Exception ;
 
-    User changPassword (Integer id , PasswordRequest passwordRequest) throws Exception;
+    User changPassword (Long id , PasswordRequest passwordRequest) throws Exception;
 
-    void deleteById (Integer id) throws Exception;
+    void deleteById (Long id) throws Exception;
 
     User findUserProfileByJwt(String jwt) throws UserException;
 }

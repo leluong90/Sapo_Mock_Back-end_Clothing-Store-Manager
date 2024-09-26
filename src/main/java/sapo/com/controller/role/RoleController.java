@@ -38,7 +38,7 @@ public class RoleController {
                 .build());
     }
     @GetMapping("/{id}")
-    public ResponseEntity<?> findById (@PathVariable Integer id) throws Exception {
+    public ResponseEntity<?> findById (@PathVariable Long id) throws Exception {
         Optional<Role> role = roleService.findById(id);
         return ResponseEntity.ok().body(ResponseObject.builder()
                         .message("Successfully")

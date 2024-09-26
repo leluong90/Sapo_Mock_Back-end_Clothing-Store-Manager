@@ -16,10 +16,11 @@ import java.util.Collection;
 @Data
 @Builder
 public class UserPrincipal implements UserDetails {
-    private Integer id ;
+    private Long id ;
     private String email ;
     private String name ;
     private String password ;
+    private Boolean status ;
     private User user ;
     private Collection<?extends GrantedAuthority> authorities ;
 
@@ -30,6 +31,7 @@ public class UserPrincipal implements UserDetails {
                 .email(user.getEmail())
                 .name(user.getName())
                 .password(user.getPassword())
+                .status(user.getStatus())
                 .authorities(user.getRoles().stream().map(item-> new SimpleGrantedAuthority(item.getName().toString())).toList()).build();
     }
     @Override
@@ -39,12 +41,12 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public String getPassword() {
-        return password;
+        return this.password;
     }
 
     @Override
     public String getUsername() {
-        return email;
+        return this.email;
     }
 
     @Override
@@ -64,11 +66,10 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-//        Boolean newStatus = ;
-//        if (newStatus ==null){
-//            return true ;
-//        }
-//        return this.user.getStatus();
-        return true;
+        if (this.status == null){
+            this.status = false ;
+            return false ;
+        }
+        return this.status;
     }
 }

@@ -61,7 +61,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     public Long getNumberOfProducts(String queryString) {
-        return productRepository.countByNameContainingAndStatus(queryString,true);
+        return productRepository.countByNameContainingAndStatus(queryString, true);
     }
 
     public Set<VariantResponse> getListOfVariants(Long page, Long limit, String queryString) {
@@ -76,7 +76,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     public Long getNumberOfVariants(String queryString) {
-        return variantRepository.countByNameContainingAndStatus(queryString,true);
+        return variantRepository.countByNameContainingAndStatus(queryString, true);
     }
 
     public ProductResponse getProductById(Long id) {
@@ -157,6 +157,15 @@ public class ProductServiceImpl implements ProductService {
                 variantRequest.getColor() + "-" +
                 variantRequest.getMaterial();
         for (Variant variant : product.getVariants()) {
+            if(variant.getSize().isEmpty()&&!variantRequest.getSize().isEmpty()){
+                variant.setSize(variantRequest.getSize());
+            }
+            if(variant.getColor().isEmpty()&&!variantRequest.getColor().isEmpty()){
+                variant.setColor(variantRequest.getColor());
+            }
+            if(variant.getMaterial().isEmpty()&&!variantRequest.getMaterial().isEmpty()){
+                variant.setMaterial(variantRequest.getMaterial());
+            }
             String variantKey = variant.getSize() + "-" +
                     variant.getColor() + "-" +
                     variant.getMaterial();
@@ -255,6 +264,24 @@ public class ProductServiceImpl implements ProductService {
             deleteProductById(productId);
         } else {
             variantRepository.deleteVariantById(variantId);
+        }
+        return true;
+
+    }
+
+    @Transactional
+    public Boolean deleteVariantByProperty(Long productId, String property, String value) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Sản phẩm không tồn tại hoặc đã bị xóa"));
+        if (product.getVariants().size() == 1) {
+            deleteProductById(productId);
+        } else {
+            if (property.equals("size"))
+                variantRepository.deleteVariantBySize(productId, value);
+            else if (property.equals("color"))
+                variantRepository.deleteVariantByColor(productId, value);
+            else if (property.equals("material"))
+                variantRepository.deleteVariantByMaterial(productId, value);
         }
         return true;
 

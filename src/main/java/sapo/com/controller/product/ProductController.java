@@ -98,4 +98,12 @@ public class ProductController {
         Boolean checkk = productService.deleteVariantById(productId, variantId);
         return new ResponseEntity<>("Xóa phiên bản thành công", HttpStatus.OK);
     }
+
+    @DeleteMapping("/{productId}/variants")
+    public ResponseEntity<?> deleteVariantByProperty(@PathVariable Long productId, @RequestParam String prop, @RequestParam String value) {
+        Boolean checkk = productService.deleteVariantByProperty(productId, prop,value);
+        return new ResponseEntity<>(new ResponseObject("Xóa phiên bản thành công", null), HttpStatus.OK);
+    }
+
+
 }

@@ -16,6 +16,7 @@ import sapo.com.model.dto.response.ResponseObject;
 import sapo.com.service.impl.BrandServiceImpl;
 import sapo.com.service.impl.CategoryServiceImpl;
 
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -31,7 +32,7 @@ public class BrandController {
     @GetMapping
     public ResponseEntity<ResponseObject> getListOfBrands(@RequestParam Long page, @RequestParam Long limit, @RequestParam String query) {
         try {
-            Set<BrandResponse> brands = brandService.getListOfBrands(page, limit, query);
+            List<BrandResponse> brands = brandService.getListOfBrands(page, limit, query);
             return new ResponseEntity<>(new ResponseObject("Lấy danh sách nhãn hiệu thành công", brands), HttpStatus.OK);
         } catch (ResourceNotFoundException e) {
             log.error("Error: ", e);

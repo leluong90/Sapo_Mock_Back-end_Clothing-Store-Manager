@@ -7,11 +7,12 @@ import sapo.com.model.dto.request.VariantRequest;
 import sapo.com.model.dto.response.ProductResponse;
 import sapo.com.model.dto.response.VariantResponse;
 
+import java.util.List;
 import java.util.Set;
 
 public interface ProductService {
-     Set<ProductResponse> getListOfProducts(Long page, Long limit,String queryString) throws ResourceNotFoundException;
-     Set<VariantResponse> getListOfVariants(Long page, Long limit, String queryString) throws ResourceNotFoundException;
+     List<ProductResponse> getListOfProducts(Long page, Long limit, String queryString) throws ResourceNotFoundException;
+     List<VariantResponse> getListOfVariants(Long page, Long limit, String queryString) throws ResourceNotFoundException;
      ProductResponse getProductById(Long id) throws ResourceNotFoundException;
      VariantResponse getVariantById(Long productId, Long variantId) throws ResourceNotFoundException;
      ProductResponse createNewProduct(ProductRequest productRequest) throws DataConflictException,ResourceNotFoundException;

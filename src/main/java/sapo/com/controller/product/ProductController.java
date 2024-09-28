@@ -18,6 +18,7 @@ import sapo.com.model.dto.response.ResponseObject;
 import sapo.com.model.dto.response.VariantResponse;
 import sapo.com.service.impl.ProductServiceImpl;
 
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -32,7 +33,7 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity<?> getListOfProducts(@RequestParam Long page, @RequestParam Long limit, @RequestParam String query) {
-        Set<ProductResponse> productResponse = productService.getListOfProducts(page, limit, query);
+        List<ProductResponse> productResponse = productService.getListOfProducts(page, limit, query);
         return new ResponseEntity<>(new ResponseObject("Lấy danh sách sản phẩm thành công", productResponse), HttpStatus.OK);
     }
 
@@ -42,9 +43,9 @@ public class ProductController {
         return new ResponseEntity<>(new ResponseObject("Lấy số lượng sản phẩm thành công", numberOfProducts), HttpStatus.OK);
     }
 
-    @GetMapping("/variants/{id}")
+    @GetMapping("/variants")
     public ResponseEntity<?> getListOfVariants(@RequestParam Long page, @RequestParam Long limit, @RequestParam String query) {
-        Set<VariantResponse> variantResponse = productService.getListOfVariants(page, limit, query);
+        List<VariantResponse> variantResponse = productService.getListOfVariants(page, limit, query);
         return new ResponseEntity<>(new ResponseObject("Lấy danh sách phiên bản thành công", variantResponse), HttpStatus.OK);
     }
 

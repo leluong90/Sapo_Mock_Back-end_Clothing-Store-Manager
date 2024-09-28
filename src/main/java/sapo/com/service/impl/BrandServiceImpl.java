@@ -17,7 +17,9 @@ import sapo.com.repository.BrandRepository;
 import sapo.com.service.BrandService;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -32,9 +34,9 @@ public class BrandServiceImpl implements BrandService {
     private EntityManager entityManager;
 
 
-    public Set<BrandResponse> getListOfBrands(Long page, Long limit, String queryString) {
+    public List<BrandResponse> getListOfBrands(Long page, Long limit, String queryString) {
         Set<Brand> brands = brandRepository.getListOfBrands(page+1, limit, queryString);
-        Set<BrandResponse> brandsResponse = new HashSet<>();
+        List<BrandResponse> brandsResponse = new ArrayList<>();
         for (Brand brand : brands) {
             brandsResponse.add(brand.transferToResponse());
         }

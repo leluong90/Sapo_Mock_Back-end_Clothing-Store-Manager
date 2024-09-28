@@ -19,10 +19,7 @@ import sapo.com.repository.*;
 import sapo.com.service.ProductService;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -49,9 +46,9 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ImagePathRepository imagePathRepository;
 
-    public Set<ProductResponse> getListOfProducts(Long page, Long limit, String queryString) {
+    public List<ProductResponse> getListOfProducts(Long page, Long limit, String queryString) {
         Set<Product> products = productRepository.getListOfProducts(page + 1, limit, queryString);
-        Set<ProductResponse> productsResponse = new HashSet<>();
+        List<ProductResponse> productsResponse = new ArrayList<>();
         for (Product product : products) {
             productsResponse.add(product.transferToResponse());
         }
@@ -64,9 +61,9 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.countByNameContainingAndStatus(queryString, true);
     }
 
-    public Set<VariantResponse> getListOfVariants(Long page, Long limit, String queryString) {
-        Set<Variant> variants = variantRepository.getListOfVariants(page, limit, queryString);
-        Set<VariantResponse> variantsResponse = new HashSet<>();
+    public List<VariantResponse> getListOfVariants(Long page, Long limit, String queryString) {
+        Set<Variant> variants = variantRepository.getListOfVariants(page+1, limit, queryString);
+        List<VariantResponse> variantsResponse = new ArrayList<>();
         for (Variant variant : variants) {
             variantsResponse.add(variant.transferToResponse());
         }

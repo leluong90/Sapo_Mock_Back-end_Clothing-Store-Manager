@@ -54,11 +54,19 @@ public class CustomerService {
         }
     }
 
-    public void register(Customer customer){
+    public void register(Customer customer) {
         customer.setCreatedOn(LocalDateTime.now());
         customer.setUpdatedOn(LocalDateTime.now());
-        customerRepository.save(customer);
 
+        // Lưu customer lần đầu để lấy ID
+        Customer savedCustomer = customerRepository.save(customer);
+
+        // Tạo mã code dựa trên ID
+        String customerCode = String.format("CUS%05d", savedCustomer.getId()); // Tạo mã với 5 chữ số
+        savedCustomer.setCode(customerCode);
+
+
+        customerRepository.save(savedCustomer);
     }
     public Customer update(Customer customerInForm) throws CustomerNotFoundException {
         Optional<Customer> customerInDB = customerRepository.findById(customerInForm.getId());

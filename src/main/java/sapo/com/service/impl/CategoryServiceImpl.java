@@ -61,7 +61,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     public CategoryResponse createNewCategory(CategoryRequest categoryRequest) {
         String code = categoryRequest.getCode();
-        if (code != "" && code.startsWith("PGN")) {
+        if (code != ""&& code!=null && code.startsWith("PGN")) {
             throw new DataConflictException("Mã loại không được có tiền tố " + "PGN");
         }
         if (code != "" && categoryRepository.existsByCode(code)) {

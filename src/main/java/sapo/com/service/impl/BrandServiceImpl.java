@@ -61,7 +61,7 @@ public class BrandServiceImpl implements BrandService {
     @Transactional
     public BrandResponse createNewBrand(BrandRequest brandRequest) {
         String code = brandRequest.getCode();
-        if (code != "" && code.startsWith("PBN")) {
+        if (code != ""&& code!=null && code.startsWith("PBN")) {
             throw new DataConflictException("Mã nhãn hiệu không được có tiền tố " + "PBN");
         }
         if (code != "" && brandRepository.existsByCode(code)) {

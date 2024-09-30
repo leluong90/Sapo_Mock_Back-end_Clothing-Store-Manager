@@ -154,6 +154,14 @@ public class ProductServiceImpl implements ProductService {
                 variantRequest.getColor() + "-" +
                 variantRequest.getMaterial();
         for (Variant variant : product.getVariants()) {
+            if(variant.getSize().isEmpty()&&variant.getColor().isEmpty()&&variant.getMaterial().isEmpty()){
+                variant.updateFromRequest(variantRequest);
+                Variant savedVariant = variantRepository.saveAndFlush(variant);
+                product.setUpdatedOn(LocalDateTime.now());
+                productRepository.saveAndFlush(product);
+                entityManager.refresh(savedVariant);
+                return savedVariant.transferToResponse();
+            }
             if(variant.getSize().isEmpty()&&!variantRequest.getSize().isEmpty()){
                 variant.setSize(variantRequest.getSize());
             }
@@ -175,7 +183,7 @@ public class ProductServiceImpl implements ProductService {
         variant.setProduct(product);
         Variant savedVariant = variantRepository.save(variant);
         product.setUpdatedOn(LocalDateTime.now());
-        productRepository.save(product);
+        productRepository.saveAndFlush(product);
         entityManager.refresh(savedVariant);
         return savedVariant.transferToResponse();
     }

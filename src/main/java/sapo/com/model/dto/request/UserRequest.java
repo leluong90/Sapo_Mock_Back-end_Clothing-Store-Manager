@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UserRequest {
     @Email(message = "Email is not valid", regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
-    @NotEmpty(message = "Email cannot be empty")
+//    @NotEmpty(message = "Email cannot be empty")
     private String email ;
     private String password ;
 }

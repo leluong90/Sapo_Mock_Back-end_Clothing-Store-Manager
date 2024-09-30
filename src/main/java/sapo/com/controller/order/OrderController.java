@@ -66,11 +66,11 @@ public class OrderController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createOrder(@RequestBody CreateOrderRequest createOrderRequest) {
+    public ResponseEntity<ResponseObject> createOrder(@RequestBody CreateOrderRequest createOrderRequest) {
         try {
-            return ResponseEntity.ok(orderService.createOrder(createOrderRequest));
+            return ResponseEntity.ok(ResponseObject.builder().data(orderService.createOrder(createOrderRequest)).build());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(ResponseObject.builder().message(e.getMessage()).status(null).build());
         }
     }
 

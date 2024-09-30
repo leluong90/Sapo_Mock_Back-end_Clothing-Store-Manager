@@ -14,9 +14,9 @@ import java.util.Date;
 import java.util.List;
 
 public interface OrderService {
-    String createOrder(CreateOrderRequest createOrderRequest);
+    OrderDetailResponse createOrder(CreateOrderRequest createOrderRequest);
     List<AllOrderResponse> getAllOrder(int page, int limit, String query, LocalDate startDate, LocalDate endDate);
     OrderDetailResponse getOrderDetail(Long orderId);
-
     OrderRevenueDto getTodayOrdersAndRevenue(Pageable pageable) throws OrderNotFoundException;
+    int getNumberOfOrders(String query, LocalDate startDate, LocalDate endDate);
 }

@@ -40,7 +40,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public String createOrder(CreateOrderRequest createOrderRequest) {
+    public OrderDetailResponse createOrder(CreateOrderRequest createOrderRequest) {
         // Kiểm tra thông tin đầu vào
         Customer customer = customerRepository.findById(createOrderRequest.getCustomerId())
                 .orElseThrow(() -> new RuntimeException("Khách hàng không tồn tại"));
@@ -48,6 +48,9 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new RuntimeException("Người tạo đơn hàng không tồn tại"));
         if (createOrderRequest.getOrderLineItems().isEmpty()) {
             throw new RuntimeException("Đơn hàng không có sản phẩm");
+        }
+        if (createOrderRequest.getCashReceive().compareTo(createOrderRequest.getTotalPayment()) < 0) {
+            throw new RuntimeException("Số tiền nhận không hợp lệ");
         }
 
         // Tạo đơn hàng
@@ -84,13 +87,19 @@ public class OrderServiceImpl implements OrderService {
             // Cập nhật số lượng sản phẩm
             variant.setQuantity(variant.getQuantity() - createOrderDetailRequest.getQuantity());
             variantRepository.save(variant);
-
-            // Thêm mã đơn hàng
-            newOrder.setCode("SON" + String.format("%05d", newOrder.getId()));
-            orderRepository.save(newOrder);
         });
 
-        return "Tạo đơn hàng thành công";
+        // Cập nhật thông tin khách hàng
+        customer.setNumberOfOrder(customer.getNumberOfOrder() + 1);
+        if(customer.getTotalExpense() == null) {
+            customer.setTotalExpense(newOrder.getTotalPayment());
+        } else customer.setTotalExpense(customer.getTotalExpense().add(newOrder.getTotalPayment()));
+
+        // Thêm mã đơn hàng
+        newOrder.setCode("SON" + String.format("%05d", newOrder.getId()));
+        orderRepository.save(newOrder);
+
+        return getOrderDetail(newOrder.getId());
     }
 
     @Override
@@ -99,7 +108,12 @@ public class OrderServiceImpl implements OrderService {
         // Chuyển đổi danh sách đơn hàng sang danh sách response
         List<AllOrderResponse> allOrderResponseList = orders.stream().map(AllOrderResponse::new).toList();
         // Phân trang
-        return allOrderResponseList.subList(Math.max((page - 1) * limit, 0), Math.min(page * limit, allOrderResponseList.size()));
+        return allOrderResponseList.subList(Math.max(page * limit, 0), Math.min((page + 1) * limit, allOrderResponseList.size()));
+    }
+
+    @Override
+    public int getNumberOfOrders(String query, LocalDate startDate, LocalDate endDate) {
+        return orderRepository.findOrdersByDateAndCode(startDate, endDate, query).size();
     }
 
     @Override

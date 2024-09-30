@@ -59,9 +59,23 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         (auth)->auth
                                 .requestMatchers("/v1/auth/**")
+
                                 .permitAll()
-                                .requestMatchers("/v1/admin/**","/v1/user/**","/v1/role/**" ,"/v1/products/**" , "/v1/categories/**" , "/v1/brands/**" , "/v1/image_paths/**" )
+                                .requestMatchers("/v1/user/**")
                                 .permitAll()
+
+                                .requestMatchers(HttpMethod.GET ,"/v1/admin/**","/v1/role/**"  )
+
+                                .permitAll()
+                                .requestMatchers("/v1/admin/reset_password/**")
+                                .permitAll()
+                                .requestMatchers(HttpMethod.POST , "/v1/admin/**","/v1/user/**","/v1/role/**" )
+                                .hasAuthority("ROLE_ADMIN")
+                                .requestMatchers(HttpMethod.PUT , "/v1/admin/**","/v1/user/**","/v1/role/**" )
+                                .hasAuthority("ROLE_ADMIN")
+                                .requestMatchers(HttpMethod.DELETE , "/v1/admin/**","/v1/user/**","/v1/role/**" )
+                                .hasAuthority("ROLE_ADMIN")
+
 //                                .requestMatchers( HttpMethod.GET , "/v1/products" , "/v1/categories" )
 //                                .permitAll()
 //                                .requestMatchers(HttpMethod.POST , "/admin/products" , "/admin/categories")

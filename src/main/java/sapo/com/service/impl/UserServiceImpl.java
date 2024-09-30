@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -83,19 +85,28 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse login(UserRequest userRequest) throws Exception {
         try {
+
             Authentication authentication ;
             authentication = authenticationProvider.authenticate(new UsernamePasswordAuthenticationToken(userRequest.getEmail(),userRequest.getPassword()));
             UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
             return UserResponse.builder()
                     .token(jwtProvider.generateToken(userPrincipal))
+                    .id(userPrincipal.getId())
                     .email(userPrincipal.getEmail())
                     .name(userPrincipal.getName())
                     .roles(userPrincipal.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet()))
                     .build();
 
+        } catch (BadCredentialsException e) {
+            // Handle incorrect email or password scenario
+            throw new Exception("Incorrect email or password. Please try again.");
+        } catch (DisabledException e) {
+            // Handle account disabled scenario
+            throw new Exception("Your account has been disabled. Please contact support.");
         }catch (AuthenticationException authenticationException){
             System.err.println(authenticationException);
-            throw new Exception("Email or password incorrect");
+            throw new Exception("Authentication failed. Please check your credentials.");
+
         }
     }
 
@@ -117,19 +128,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User update(Long id, UpdateUserRequest updateUserRequest) throws Exception {
+
+    public User update(Long id, User user) throws Exception {
+
 
         Optional<User> findByIdUser = userRepository.findById(id);
         if (findByIdUser.isPresent()){
 
             User updateUser = findByIdUser.get();
-            updateUser.setName(updateUserRequest.getName());
-            updateUser.setEmail(updateUserRequest.getEmail());
-            updateUser.setPassword(passwordEncoder.encode(updateUserRequest.getPassword()));
-            updateUser.setAddress(updateUserRequest.getAddress());
-            updateUser.setPhoneNumber(updateUserRequest.getPhoneNumber());
-            updateUser.setStatus(updateUserRequest.getStatus());
-            updateUser.setUpdatedOn(LocalDateTime.now());
+
+            updateUser.setName(user.getName());
+            updateUser.setEmail(user.getEmail());
+//            updateUser.setPassword(passwordEncoder.encode(updateUser.getPassword()));
+            updateUser.setPassword(updateUser.getPassword());
+            updateUser.setAddress(user.getAddress());
+            updateUser.setPhoneNumber(user.getPhoneNumber());
+            updateUser.setRoles(user.getRoles());
+            updateUser.setStatus(user.getStatus());
+            updateUser.setUpdateOn(LocalDateTime.now());
+
             return userRepository.save(updateUser);
         }else {
             throw new Exception("Id not found");
@@ -173,6 +190,39 @@ public class UserServiceImpl implements UserService {
         }else {
             throw new Exception("Phone number not found");
         }
+    }
+
+
+
+    @Override
+    public User findByEmail(String email) throws Exception {
+        User user = userRepository.findByEmail(email);
+        if (user != null){
+            return user ;
+        }else {
+            throw new Exception("Email not found");
+        }
+    }
+
+    @Override
+    public void existPhoneNumber(String phoneNumber) throws Exception {
+        User user = userRepository.findByPhoneNumber(phoneNumber);
+        if (user != null){
+            throw new Exception("Exist phone number");
+        }else {
+            System.out.println("Not exist phone number");
+        }
+    }
+
+    @Override
+    public void existEmail(String email) throws Exception {
+        User user = userRepository.findByEmail(email);
+        if (user != null){
+            throw new Exception("Exist email");
+        }else {
+            System.out.println("Not exist email");
+        }
+
     }
 
     @Override

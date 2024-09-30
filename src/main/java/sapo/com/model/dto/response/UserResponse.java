@@ -12,6 +12,7 @@ import java.util.Set;
 @Data
 @Builder
 public class UserResponse {
+    private Long id ;
     private String token ;
     private String name ;
     private String email;

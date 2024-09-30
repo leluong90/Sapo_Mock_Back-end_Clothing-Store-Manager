@@ -63,7 +63,9 @@ public class SecurityConfig {
                                 .permitAll()
                                 .requestMatchers("/v1/user/**")
                                 .permitAll()
+
                                 .requestMatchers(HttpMethod.GET ,"/v1/admin/**","/v1/role/**"  )
+
                                 .permitAll()
                                 .requestMatchers("/v1/admin/reset_password/**")
                                 .permitAll()

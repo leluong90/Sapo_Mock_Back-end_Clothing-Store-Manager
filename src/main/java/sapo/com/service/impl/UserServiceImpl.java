@@ -128,12 +128,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+
     public User update(Long id, User user) throws Exception {
+
 
         Optional<User> findByIdUser = userRepository.findById(id);
         if (findByIdUser.isPresent()){
 
             User updateUser = findByIdUser.get();
+
             updateUser.setName(user.getName());
             updateUser.setEmail(user.getEmail());
 //            updateUser.setPassword(passwordEncoder.encode(updateUser.getPassword()));
@@ -143,6 +146,7 @@ public class UserServiceImpl implements UserService {
             updateUser.setRoles(user.getRoles());
             updateUser.setStatus(user.getStatus());
             updateUser.setUpdateOn(LocalDateTime.now());
+
             return userRepository.save(updateUser);
         }else {
             throw new Exception("Id not found");

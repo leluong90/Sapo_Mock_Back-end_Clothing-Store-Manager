@@ -73,7 +73,9 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
+
     public ResponseEntity<?> update(@RequestBody @Valid User user , BindingResult bindingResult , @PathVariable Long id) throws Exception {
+
         if (bindingResult.hasErrors()){
             return ResponseEntity.badRequest().body(bindingResult.getAllErrors().stream().map(ObjectError:: getDefaultMessage ).collect(Collectors.joining("\n")));
         }

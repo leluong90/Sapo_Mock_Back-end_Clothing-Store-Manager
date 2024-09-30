@@ -18,7 +18,9 @@ import sapo.com.repository.CategoryRepository;
 import sapo.com.service.CategoryService;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -32,9 +34,9 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    public Set<CategoryResponse> getListOfCategories(Long page, Long limit, String queryString) {
+    public List<CategoryResponse> getListOfCategories(Long page, Long limit, String queryString) {
         Set<Category> categories = categoryRepository.getListOfCategories(page+1, limit, queryString);
-        Set<CategoryResponse> categoriesResponse = new HashSet<>();
+        List<CategoryResponse> categoriesResponse = new ArrayList<>();
         for (Category category : categories) {
             categoriesResponse.add(category.transferToResponse());
         }
@@ -59,7 +61,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     public CategoryResponse createNewCategory(CategoryRequest categoryRequest) {
         String code = categoryRequest.getCode();
-        if (code != "" && code.startsWith("PGN")) {
+        if (code != ""&& code!=null && code.startsWith("PGN")) {
             throw new DataConflictException("Mã loại không được có tiền tố " + "PGN");
         }
         if (code != "" && categoryRepository.existsByCode(code)) {
@@ -82,7 +84,7 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Loại sản phẩm không tồn tại hoặc đã bị xóa"));
         String code = categoryRequest.getCode();
-        if(code.equals(category.getCode()) && code != ""){
+        if(!code.equals(category.getCode()) && code != ""){
             if (code.startsWith("PGN")) {
                 throw new DataConflictException("Mã loại không được có tiền tố " + "PGN");
             }

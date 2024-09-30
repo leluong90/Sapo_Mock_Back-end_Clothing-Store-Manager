@@ -26,7 +26,7 @@ public class ProductRequest {
     private Set<String> imagePath;
     @Valid
     @NotEmpty(message = "Phiên bản không được trống.")
-    private Set<VariantRequest> variants;
+    private List<VariantRequest> variants;
 
     //Do not have brand, category, variant
     public Product transferToProduct(){
@@ -41,12 +41,12 @@ public class ProductRequest {
                     return imagePath;
                 }).collect(Collectors.toSet());
         product.setImagePath(imagePaths);
-        Set<Variant> variants = this.variants.stream()
+        List<Variant> variants = this.variants.stream()
                 .map(variant -> {
                     Variant variantItem = variant.transferToVariant();
                     variantItem.setProduct(product);
                     return variantItem;
-                }).collect(Collectors.toSet());
+                }).collect(Collectors.toList());
         product.setVariants(variants);
         return product;
     }

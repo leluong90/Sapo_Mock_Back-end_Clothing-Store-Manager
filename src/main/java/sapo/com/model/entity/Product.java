@@ -13,8 +13,10 @@ import java.awt.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 
@@ -53,7 +55,7 @@ public class Product {
     private LocalDateTime updatedOn ;
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL,orphanRemoval = true)
     @JsonManagedReference
-    private Set<Variant> variants;
+    private List<Variant> variants;
 
     public void addImagePath(ImagePath imagePath) {
         this.imagePath.add(imagePath);
@@ -75,8 +77,8 @@ public class Product {
         return imagePaths;
     }
 
-    public Set<VariantResponse> getVariantResponse(){
-        Set<VariantResponse> variantResponse= new HashSet<>();
+    public List<VariantResponse> getVariantResponse(){
+        List<VariantResponse> variantResponse= new ArrayList<>();
         for(Variant variant: this.variants){
             variantResponse.add(variant.transferToResponse());
         }

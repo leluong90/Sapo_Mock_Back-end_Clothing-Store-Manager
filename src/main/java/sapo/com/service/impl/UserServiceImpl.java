@@ -77,6 +77,7 @@ public class UserServiceImpl implements UserService {
         newUser.setRoles(roles);
         newUser.setAddress(user.getAddress());
         newUser.setPhoneNumber(user.getPhoneNumber());
+        newUser.setBirthDay(user.getBirthDay());
         newUser.setCreatedOn(LocalDateTime.now());
 
         return userRepository.save(newUser);
@@ -99,13 +100,13 @@ public class UserServiceImpl implements UserService {
 
         } catch (BadCredentialsException e) {
             // Handle incorrect email or password scenario
-            throw new Exception("Incorrect email or password. Please try again.");
+            throw new Exception("Email hoặc password không chính xác . Vui lòng thử lại .");
         } catch (DisabledException e) {
             // Handle account disabled scenario
-            throw new Exception("Your account has been disabled. Please contact support.");
+            throw new Exception("Tài khoản của bạn đã bị khóa . Vui lòng liên hệ chủ cửa hàng để được hỗ trợ .");
         }catch (AuthenticationException authenticationException){
             System.err.println(authenticationException);
-            throw new Exception("Authentication failed. Please check your credentials.");
+            throw new Exception("Xác thực không thành công. Vui lòng kiểm tra thông tin đăng nhập của bạn.");
 
         }
     }
@@ -118,13 +119,18 @@ public class UserServiceImpl implements UserService {
             updatePasswordUser.setPassword(passwordEncoder.encode("123456"));
             return userRepository.save(updatePasswordUser);
         }else {
-            throw new Exception("Id  not found");
+            throw new Exception("Id khong tim th ");
         }
     }
 
     @Override
     public Page<User> findAll(Pageable pageable) {
         return userRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<User> findAllByRolesName(Pageable pageable, String role) {
+        return userRepository.findAllByRolesName(role, pageable);
     }
 
     @Override
@@ -142,10 +148,11 @@ public class UserServiceImpl implements UserService {
             updateUser.setPhoneNumber(user.getPhoneNumber());
             updateUser.setRoles(user.getRoles());
             updateUser.setStatus(user.getStatus());
+            updateUser.setBirthDay(user.getBirthDay());
             updateUser.setUpdateOn(LocalDateTime.now());
             return userRepository.save(updateUser);
         }else {
-            throw new Exception("Id not found");
+            throw new Exception("ID không tìm thấy");
         }
     }
 
@@ -163,7 +170,7 @@ public class UserServiceImpl implements UserService {
             // No need to encode or set the password here since we're only updating roles
             return userRepository.save(user);
         } else {
-            throw new Exception("Id or role not found");
+            throw new Exception("ID không tìm thấy");
         }
     }
 
@@ -179,12 +186,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User findByName(String name) throws Exception {
+        User user = userRepository.findByName(name);
+        if(user != null){
+            return user;
+        }throw new Exception("Tên không tìm thấy");
+    }
+
+    @Override
     public User findByPhoneNumber(String phoneNumber) throws Exception {
         User user = userRepository.findByPhoneNumber(phoneNumber);
         if (user != null){
             return user;
         }else {
-            throw new Exception("Phone number not found");
+            throw new Exception("Số điện thoại không được tìm thấy");
         }
     }
 
@@ -196,7 +211,7 @@ public class UserServiceImpl implements UserService {
         if (user != null){
             return user ;
         }else {
-            throw new Exception("Email not found");
+            throw new Exception("Email không được tìm thấy");
         }
     }
 
@@ -227,7 +242,7 @@ public class UserServiceImpl implements UserService {
         if (user.isPresent()){
             User updatePasswordUser = user.get();
             if (passwordEncoder.matches(passwordRequest.getPassword(), updatePasswordUser.getPassword())){
-                throw new Exception("Password not change");
+                throw new Exception("Password không thay đổi");
             }
             updatePasswordUser.setPassword(passwordEncoder.encode(passwordRequest.getPassword()));
             return userRepository.save(updatePasswordUser);

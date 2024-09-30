@@ -18,6 +18,7 @@ import java.util.List;
 public class OrderDetailResponse {
     private String code;
     private Long customerId;
+    private Long creatorId;
     private List<OrderDetail> orderDetails;
     private String note;
     private String paymentType;
@@ -30,6 +31,7 @@ public class OrderDetailResponse {
     public OrderDetailResponse(Order order) {
         this.code = order.getCode();
         this.customerId = order.getCustomer().getId();
+        this.creatorId = order.getCreator().getId();
         this.note = order.getNote();
         this.paymentType = order.getPaymentType();
         this.cashReceive = order.getCashReceive();

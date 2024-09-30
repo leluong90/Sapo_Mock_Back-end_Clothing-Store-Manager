@@ -40,7 +40,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public String createOrder(CreateOrderRequest createOrderRequest) {
+    public OrderDetailResponse createOrder(CreateOrderRequest createOrderRequest) {
         // Kiểm tra thông tin đầu vào
         Customer customer = customerRepository.findById(createOrderRequest.getCustomerId())
                 .orElseThrow(() -> new RuntimeException("Khách hàng không tồn tại"));
@@ -87,10 +87,6 @@ public class OrderServiceImpl implements OrderService {
             // Cập nhật số lượng sản phẩm
             variant.setQuantity(variant.getQuantity() - createOrderDetailRequest.getQuantity());
             variantRepository.save(variant);
-
-            // Thêm mã đơn hàng
-            newOrder.setCode("SON" + String.format("%05d", newOrder.getId()));
-            orderRepository.save(newOrder);
         });
 
         // Cập nhật thông tin khách hàng
@@ -99,7 +95,11 @@ public class OrderServiceImpl implements OrderService {
             customer.setTotalExpense(newOrder.getTotalPayment());
         } else customer.setTotalExpense(customer.getTotalExpense().add(newOrder.getTotalPayment()));
 
-        return "Tạo đơn hàng thành công";
+        // Thêm mã đơn hàng
+        newOrder.setCode("SON" + String.format("%05d", newOrder.getId()));
+        orderRepository.save(newOrder);
+
+        return getOrderDetail(newOrder.getId());
     }
 
     @Override

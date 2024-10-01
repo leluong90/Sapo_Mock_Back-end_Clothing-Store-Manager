@@ -19,10 +19,7 @@ import sapo.com.repository.*;
 import sapo.com.service.ProductService;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -49,9 +46,9 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ImagePathRepository imagePathRepository;
 
-    public Set<ProductResponse> getListOfProducts(Long page, Long limit, String queryString) {
+    public List<ProductResponse> getListOfProducts(Long page, Long limit, String queryString) {
         Set<Product> products = productRepository.getListOfProducts(page + 1, limit, queryString);
-        Set<ProductResponse> productsResponse = new HashSet<>();
+        List<ProductResponse> productsResponse = new ArrayList<>();
         for (Product product : products) {
             productsResponse.add(product.transferToResponse());
         }
@@ -61,12 +58,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     public Long getNumberOfProducts(String queryString) {
-        return productRepository.countByNameContainingAndStatus(queryString,true);
+        return productRepository.countByNameContainingAndStatus(queryString, true);
     }
 
-    public Set<VariantResponse> getListOfVariants(Long page, Long limit, String queryString) {
-        Set<Variant> variants = variantRepository.getListOfVariants(page, limit, queryString);
-        Set<VariantResponse> variantsResponse = new HashSet<>();
+    public List<VariantResponse> getListOfVariants(Long page, Long limit, String queryString) {
+        Set<Variant> variants = variantRepository.getListOfVariants(page+1, limit, queryString);
+        List<VariantResponse> variantsResponse = new ArrayList<>();
         for (Variant variant : variants) {
             variantsResponse.add(variant.transferToResponse());
         }
@@ -76,7 +73,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     public Long getNumberOfVariants(String queryString) {
-        return variantRepository.countByNameContainingAndStatus(queryString,true);
+        return variantRepository.countByNameContainingAndStatus(queryString, true);
     }
 
     public ProductResponse getProductById(Long id) {
@@ -157,6 +154,23 @@ public class ProductServiceImpl implements ProductService {
                 variantRequest.getColor() + "-" +
                 variantRequest.getMaterial();
         for (Variant variant : product.getVariants()) {
+            if(variant.getSize().isEmpty()&&variant.getColor().isEmpty()&&variant.getMaterial().isEmpty()){
+                variant.updateFromRequest(variantRequest);
+                Variant savedVariant = variantRepository.saveAndFlush(variant);
+                product.setUpdatedOn(LocalDateTime.now());
+                productRepository.saveAndFlush(product);
+                entityManager.refresh(savedVariant);
+                return savedVariant.transferToResponse();
+            }
+            if(variant.getSize().isEmpty()&&!variantRequest.getSize().isEmpty()){
+                variant.setSize(variantRequest.getSize());
+            }
+            if(variant.getColor().isEmpty()&&!variantRequest.getColor().isEmpty()){
+                variant.setColor(variantRequest.getColor());
+            }
+            if(variant.getMaterial().isEmpty()&&!variantRequest.getMaterial().isEmpty()){
+                variant.setMaterial(variantRequest.getMaterial());
+            }
             String variantKey = variant.getSize() + "-" +
                     variant.getColor() + "-" +
                     variant.getMaterial();
@@ -169,7 +183,7 @@ public class ProductServiceImpl implements ProductService {
         variant.setProduct(product);
         Variant savedVariant = variantRepository.save(variant);
         product.setUpdatedOn(LocalDateTime.now());
-        productRepository.save(product);
+        productRepository.saveAndFlush(product);
         entityManager.refresh(savedVariant);
         return savedVariant.transferToResponse();
     }
@@ -255,6 +269,24 @@ public class ProductServiceImpl implements ProductService {
             deleteProductById(productId);
         } else {
             variantRepository.deleteVariantById(variantId);
+        }
+        return true;
+
+    }
+
+    @Transactional
+    public Boolean deleteVariantByProperty(Long productId, String property, String value) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Sản phẩm không tồn tại hoặc đã bị xóa"));
+        if (product.getVariants().size() == 1) {
+            deleteProductById(productId);
+        } else {
+            if (property.equals("size"))
+                variantRepository.deleteVariantBySize(productId, value);
+            else if (property.equals("color"))
+                variantRepository.deleteVariantByColor(productId, value);
+            else if (property.equals("material"))
+                variantRepository.deleteVariantByMaterial(productId, value);
         }
         return true;
 

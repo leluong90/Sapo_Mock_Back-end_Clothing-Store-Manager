@@ -12,6 +12,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -19,6 +20,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Data
 @Builder
+@Table(name = "customers")
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,12 +29,18 @@ public class Customer {
     private String code;
     @Column(nullable = false)
     private String name;
-    @Column(name="phone_number",nullable = false)
+    @Column(name = "phone_number", nullable = false, length = 10)
     private String phoneNumber;
+    @Column
     private String email;
+    @Column(nullable = false)
     private boolean gender;
+    @Column(columnDefinition = "TEXT")
     private String note;
+    @Column(nullable = false)
     private boolean status;
+
+    @Column(columnDefinition = "TEXT")
     private String address;
     private Date birthday;
     @Column(name = "created_on")
@@ -46,9 +54,17 @@ public class Customer {
     @Column(name = "number_of_order")
     private int numberOfOrder;
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
     @JsonManagedReference
-    private Set<Order> orders;
+    private List<Order> orders;
+
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
+    }
 
     public Long getId() {
         return id;

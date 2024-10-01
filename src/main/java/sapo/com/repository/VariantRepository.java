@@ -15,13 +15,13 @@ import java.util.Set;
 @Repository
 public interface VariantRepository extends JpaRepository<Variant, Long> {
 
-    @Query("SELECT DISTINCT v.size FROM Variant v WHERE v.product.id = :productId AND v.status = true")
+    @Query("SELECT DISTINCT v.size FROM Variant v WHERE v.product.id = :productId AND v.status = true AND v.size <> ''")
     Set<String> findDistinctSizesByProductId(@Param("productId") Long productId);
 
-    @Query("SELECT DISTINCT v.color FROM Variant v WHERE v.product.id = :productId AND v.status = true")
+    @Query("SELECT DISTINCT v.color FROM Variant v WHERE v.product.id = :productId AND v.status = true AND v.color <> ''")
     Set<String> findDistinctColorsByProductId(@Param("productId") Long productId);
 
-    @Query("SELECT DISTINCT v.material FROM Variant v WHERE v.product.id = :productId AND v.status = true")
+    @Query("SELECT DISTINCT v.material FROM Variant v WHERE v.product.id = :productId AND v.status = true AND v.material <> ''")
 
     Set<String> findDistinctMaterialsByProductId(@Param("productId") Long productId);
 
@@ -32,6 +32,18 @@ public interface VariantRepository extends JpaRepository<Variant, Long> {
     @Modifying
     @Query("update Variant v set v.status = false where v.product.id = :productId")
     int deleteAllVariantOfProduct(Long productId);
+
+    @Modifying
+    @Query("update Variant v set v.status = false where v.product.id = :productId AND v.size = :value")
+    int deleteVariantBySize(Long productId, String value);
+
+    @Modifying
+    @Query("update Variant v set v.status = false where v.product.id = :productId AND v.color = :value")
+    int deleteVariantByColor(Long productId, String value);
+
+    @Modifying
+    @Query("update Variant v set v.status = false where v.product.id = :productId AND v.material = :value")
+    int deleteVariantByMaterial(Long productId, String value);
 
     @Query(
             value = "CALL get_list_of_variants(:page, :limit, :query)",

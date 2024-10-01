@@ -17,7 +17,9 @@ import sapo.com.repository.BrandRepository;
 import sapo.com.service.BrandService;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -32,9 +34,9 @@ public class BrandServiceImpl implements BrandService {
     private EntityManager entityManager;
 
 
-    public Set<BrandResponse> getListOfBrands(Long page, Long limit, String queryString) {
+    public List<BrandResponse> getListOfBrands(Long page, Long limit, String queryString) {
         Set<Brand> brands = brandRepository.getListOfBrands(page+1, limit, queryString);
-        Set<BrandResponse> brandsResponse = new HashSet<>();
+        List<BrandResponse> brandsResponse = new ArrayList<>();
         for (Brand brand : brands) {
             brandsResponse.add(brand.transferToResponse());
         }
@@ -59,7 +61,7 @@ public class BrandServiceImpl implements BrandService {
     @Transactional
     public BrandResponse createNewBrand(BrandRequest brandRequest) {
         String code = brandRequest.getCode();
-        if (code != "" && code.startsWith("PBN")) {
+        if (code != ""&& code!=null && code.startsWith("PBN")) {
             throw new DataConflictException("Mã nhãn hiệu không được có tiền tố " + "PBN");
         }
         if (code != "" && brandRepository.existsByCode(code)) {
@@ -82,7 +84,7 @@ public class BrandServiceImpl implements BrandService {
         Brand brand = brandRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Nhãn hiệu không tồn tại hoặc đã bị xóa"));
         String code = brandRequest.getCode();
-        if(code.equals(brand.getCode()) && code != ""){
+        if(!code.equals(brand.getCode()) && code != ""){
             if (code.startsWith("PBN")) {
                 throw new DataConflictException("Mã nhãn hiệu không được có tiền tố " + "PBN");
             }

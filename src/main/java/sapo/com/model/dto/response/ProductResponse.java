@@ -7,6 +7,7 @@ import lombok.Setter;
 import sapo.com.model.entity.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -27,7 +28,7 @@ public class ProductResponse {
     private Set<String> imagePath;
     private LocalDateTime createdOn ;
     private LocalDateTime updatedOn ;
-    private Set<VariantResponse> variants;
+    private List<VariantResponse> variants;
 
     public ProductResponse(){
 

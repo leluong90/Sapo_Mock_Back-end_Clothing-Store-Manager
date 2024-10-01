@@ -15,6 +15,7 @@ import sapo.com.model.entity.Category;
 import sapo.com.service.impl.CategoryServiceImpl;
 import sapo.com.service.impl.ProductServiceImpl;
 
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -29,7 +30,7 @@ public class CategoryController {
 
     @GetMapping
     public ResponseEntity<ResponseObject> getListOfCategories(@RequestParam Long page, @RequestParam Long limit, @RequestParam String query) {
-        Set<CategoryResponse> categories = categoryService.getListOfCategories(page, limit, query);
+        List<CategoryResponse> categories = categoryService.getListOfCategories(page, limit, query);
         return new ResponseEntity<>(new ResponseObject("Lấy danh sách loại sản phẩm thành công", categories), HttpStatus.OK);
     }
 
@@ -68,9 +69,9 @@ public class CategoryController {
 
         Boolean checkk = categoryService.deleteCategoryById(id);
         if (checkk)
-            return new ResponseEntity<>("Xóa loại sản phẩm thành công", HttpStatus.OK);
+            return new ResponseEntity<>(new ResponseObject("Xóa loại sản phẩm thành công",null), HttpStatus.OK);
         else
-            return new ResponseEntity<>("Có lỗi khi xóa loại sản phẩm", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ResponseObject("Không thể xóa loại sản phẩm này.",null), HttpStatus.BAD_REQUEST);
 
     }
 

@@ -17,6 +17,3 @@ public class Role {
     private Long id ;
     private String name  ;
 }
-//    @OneToMany(mappedBy = "roles"  , fetch = FetchType.EAGER)
-//    @JsonIgnore
-//    private Set<User> users ;

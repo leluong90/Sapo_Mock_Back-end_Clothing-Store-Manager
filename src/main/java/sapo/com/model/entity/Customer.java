@@ -19,6 +19,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Data
 @Builder
+@Table(name = "customers")
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

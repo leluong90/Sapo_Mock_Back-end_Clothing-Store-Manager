@@ -18,16 +18,17 @@ public interface UserService {
     User resetPassword (Long id) throws Exception;
     Page<User> findAll(Pageable pageable);
 
+    Page<User> findAllByRolesName(Pageable pageable , String role) ;
 
     User update (Long id , User user) throws Exception;
-
 
     User updateRole (Long id , Role role) throws Exception;
 
     User findById(Long id) throws UserException;
 
-    User findByPhoneNumber(String phoneNumber) throws Exception;
+    User findByName(String name) throws Exception;
 
+    User findByPhoneNumber(String phoneNumber) throws Exception;
 
     User findByEmail(String email) throws Exception;
 
@@ -36,7 +37,6 @@ public interface UserService {
     void existEmail(String email) throws Exception ;
 
     User changPassword (Long id , PasswordRequest passwordRequest) throws Exception;
-
 
     void deleteById (Long id) throws Exception;
 

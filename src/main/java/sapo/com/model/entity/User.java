@@ -41,6 +41,8 @@ public class User {
     private String phoneNumber ;
     private String address ;
     private Boolean status ;
+    @JsonFormat (pattern = "yyyy-MM-dd")
+    private LocalDate birthDay ;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_role",

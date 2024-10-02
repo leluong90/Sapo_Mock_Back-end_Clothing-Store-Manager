@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -77,7 +78,7 @@ public class OrderController {
     @GetMapping("/today")
     public ResponseEntity<OrderRevenueDto> getTodayOrders(@RequestParam(value = "pageNum", required = false, defaultValue = "0") int pageNum,
                                                           @RequestParam(value = "pageSize", defaultValue = "5") int pageSize) throws OrderNotFoundException {
-        Pageable pageable = PageRequest.of(pageNum, pageSize);
+        Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Direction.DESC, "createdOn"));
         OrderRevenueDto orderRevenue = orderService.getTodayOrdersAndRevenue(pageable);
         return new ResponseEntity<>(orderRevenue, HttpStatus.OK);
     }

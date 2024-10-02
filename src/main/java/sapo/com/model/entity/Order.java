@@ -2,9 +2,11 @@ package sapo.com.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -17,17 +19,18 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Builder
 @Table(name = "orders")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
-    @JsonBackReference
+    @JsonBackReference(value = "customer-orders")
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
     @ManyToOne
-    @JsonBackReference
+    @JsonBackReference(value = "user-order")
     @JoinColumn(name = "creator_id", nullable = false)
     private User creator;
     @Column(unique = true)
@@ -47,7 +50,8 @@ public class Order {
     private BigDecimal totalPayment;
     @Column(name = "payment_type")
     private String paymentType;
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    @JsonManagedReference(value = "order-orderDetails")
+    @JsonIgnore
     private Set<OrderDetail> orderDetails;
 }
